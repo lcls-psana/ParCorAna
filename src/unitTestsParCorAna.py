@@ -29,7 +29,7 @@ import ParCorAna as corAna
 
 ### helper function
 def runCmd(cmd, verbose=True):
-    o,e,retcode = ptl.cmdTimeOutWithReturnCode(cmd)
+    o,e,retcode = ptl.cmdTimeOutWithReturnCode(cmd, seconds=10*60)
     if verbose: print "---  ran cmd: %s" % cmd
     return retcode
 
