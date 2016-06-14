@@ -6,8 +6,11 @@
 #------------------------------------------------------------------------
 
 from ParCorAna.unitTestsParCorAna import *
+import os
 
 if __name__ == "__main__":
-    # now run the tests in unitTestsParCorAna, this routine does not return.
-    unittest.main(argv=[sys.argv[0], '-v'])
+    # disable unit tests on rhel5 machine as it is heavily loaded
+    if os.environ['SIT_ARCH'].find('-rhel5-')>0:
+        # now run the tests in unitTestsParCorAna, this routine does not return.
+        unittest.main(argv=[sys.argv[0], '-v'])
 

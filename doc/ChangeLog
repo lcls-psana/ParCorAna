@@ -11,6 +11,10 @@ Package author: David A. Schneider
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+Tag: V00-00-32
+June 14 2016 David Schneider
+- skip unit tests on rhel5 machine as it is heavily loaded
+	
 Tag: V00-00-31
 - increase timeout on mpiexec calls to 10 minutes, a test failed on the 
   rhel5 machine psdev106 due to timeout
