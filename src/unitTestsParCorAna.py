@@ -56,8 +56,7 @@ class FormatFileName( unittest.TestCase ) :
 
     def setUp(self) :
         self.longMessage = True
-        destDirBase = AppDataPath(os.path.join("ParCorAna","testingDir")).path()
-        self.tempDestDir = tempfile.mkdtemp(dir=destDirBase)
+        self.tempDestDir = tempfile.mkdtemp()
 
     def tearDown(self) :
         shutil.rmtree(self.tempDestDir, ignore_errors=True)
@@ -211,9 +210,7 @@ class Cspad2x2( unittest.TestCase ) :
         serversRoundRobin = False
         
         # make a random directory for the testing that we will remove when done
-        destDirBase = AppDataPath(os.path.join("ParCorAna","testingDir")).path()
-        assert len(destDirBase)>0, "did not find testingDir base dir in the ParCorAna data dir"
-        tempDestDir = tempfile.mkdtemp(dir=destDirBase)
+        tempDestDir = tempfile.mkdtemp()
         if not os.path.exists(tempDestDir): os.mkdir(tempDestDir)
         h5outputBaseName = 'g2calc_cspad2x2_%%s_%s-r%4.4d.h5' % (experiment, run)  # has %%s for for testName
         testH5outputBaseName = 'test_' + h5outputBaseName

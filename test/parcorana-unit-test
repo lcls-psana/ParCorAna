@@ -7,10 +7,17 @@
 
 from ParCorAna.unitTestsParCorAna import *
 import os
-
+import sys
+  
 if __name__ == "__main__":
-    # disable unit tests on rhel5 machine as it is heavily loaded
-    if os.environ['SIT_ARCH'].find('-rhel5-')>0:
-        # now run the tests in unitTestsParCorAna, this routine does not return.
-        unittest.main(argv=[sys.argv[0], '-v'])
+    sit_arch = os.environ.get('SIT_ARCH',None)
+    if sit_arch is None:
+      sys.stderr.write("WARNING: SIT_ARCH not defined, skipping parcorana unit tests\n")
+      sys.exit(0)
+    # rhel5 build machine is heavily loaded, skip tests here
+    if  sit_arch.find('-rhel5-')>0:
+      sys.exit(0)
+
+    # now run the tests in unitTestsParCorAna, this routine does not return.
+    unittest.main(argv=[sys.argv[0], '-v'])
 
