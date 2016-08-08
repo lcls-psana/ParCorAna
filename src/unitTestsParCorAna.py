@@ -27,6 +27,10 @@ import psana_test.psanaTestLib as ptl
 
 import ParCorAna as corAna
 
+NOCLEAN = os.environ.get('NOCLEAN',False)
+if not NOCLEAN:
+    sys.stdout.write("%s: set environment variable NOCLEAN=1 to keep temporary directories and from unit tests" %  __file__)
+
 ### helper function
 def runCmd(cmd, verbose=True):
     o,e,retcode = ptl.cmdTimeOutWithReturnCode(cmd, seconds=10*60)
@@ -59,6 +63,9 @@ class FormatFileName( unittest.TestCase ) :
         self.tempDestDir = tempfile.mkdtemp()
 
     def tearDown(self) :
+        global NOCLEAN
+        if NOCLEAN:
+            return
         shutil.rmtree(self.tempDestDir, ignore_errors=True)
         
     def test_formatFileName(self):
@@ -305,6 +312,9 @@ class Cspad2x2( unittest.TestCase ) :
         This method will only be called if the setUp() succeeds, regardless 
         of the outcome of the test method. 
         """
+        global NOCLEAN
+        if NOCLEAN:
+            return
         shutil.rmtree(self.tempDestDir, ignore_errors=True) 
 
 
