@@ -1,4 +1,5 @@
 ## system
+import mpi4py
 from mpi4py import MPI
 import os
 import numpy as np
@@ -16,6 +17,8 @@ from MessageBuffers import SM_MsgBuffer, MVW_MsgBuffer
 import Timing
 from XCorrBase import XCorrBase
 import Counter120hz
+
+MPI4PY_200 = mpi4py.__version__.startswith('2')
 
 ########## for Timing.timecall
 VIEWEREVT = 'update'
@@ -94,7 +97,10 @@ def identifyServerRanks(comm, numServers, serverHosts=None, excludeRank0=True):
     ## identify host -> rank map through collective MPI communication
     localHostName = MPI.Get_processor_name()
     allHostNames = []
-    allHostNames = comm.allgather(localHostName, None)
+    if MPI4PY_200:
+        allHostNames = comm.allgather(localHostName)
+    else:
+        allHostNames = comm.allgather(localHostName, None)
     assert len(allHostNames) == comm.Get_size(), 'allgather failed - did not get one host per rank'
     serverHost2ranks = collections.defaultdict(list)
     for ii, hostName in enumerate(allHostNames):
