@@ -11,6 +11,7 @@ Package author: David A. Schneider
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+Tag: V00-00-36
 Jan 27, 2017 David Schneider
 - really disable unit testing on rhel5 for anything with mpi
 	
