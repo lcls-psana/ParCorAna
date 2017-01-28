@@ -11,6 +11,9 @@ Package author: David A. Schneider
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+Jan 27, 2017 David Schneider
+- really disable unit testing on rhel5 for anything with mpi
+	
 Aug 8, 2016 David Schneider
 - per JIRA PSRT-136 update code to handle mpi4py 2.0.0 or 1.3.1
 - allow user to set environment variable NOCLEAN=1 to keep /tmp dirs from unittests
