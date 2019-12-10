@@ -139,7 +139,7 @@ class ParCorAna( unittest.TestCase ) :
             l2 = corAna.makeLogger( False, True, False, False, 0, 'INFO', False) # make sure getting another ref doesn't double handlers
             l.info(msg1)
             l.warning(msg2)
-        except Exception,e:
+        except Exception as e:
             sys.stdout = stdout
             sys.stderr = stderr
             raise e

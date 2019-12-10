@@ -210,7 +210,7 @@ class EventIter(object):
 
         try:
             ds = psana.DataSource(self.dataSourceString)
-        except RuntimeError,e:
+        except RuntimeError as e:
             self.logger.error("RuntimeError creating datasource for string: %s" % self.dataSourceString)
             raise e
         

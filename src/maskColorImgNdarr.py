@@ -217,7 +217,7 @@ def getNdarr2ImageMapping(dsetstring, srcString, psanaType, psanaTypeStr, geom):
     if geom is None:
         try:
             geometryFile = getGeometryFile(dsetstring, srcString, psanaTypeStr)
-        except NoGeomFile,e:
+        except NoGeomFile as e:
             if typeIs2D(psanaType):
                 iX=None
                 iY=None
@@ -304,9 +304,9 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
     assert psanaTypeStr.startswith('psana.'), "psana type must start with psana."
     try:
         psanaType = eval(psanaTypeStr)
-    except NameError,e:
+    except NameError as e:
         raise NameError("Unable to evaluate psana type from string: %s" % psanaTypeStr)
-    except AttributeError,e:
+    except AttributeError as e:
         raise AttributeError("psana type string: % s has attribute that is wrong. Check type spec" % psanaTypeStr)
 
     iX, iY = getNdarr2ImageMapping(dsetstring, srcString, psanaType, psanaTypeStr, geom)
