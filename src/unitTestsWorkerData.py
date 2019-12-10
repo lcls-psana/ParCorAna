@@ -1,7 +1,7 @@
 #--------------------------------------------------------------------------
 # Description:
 #   Test script for ParCorAna
-#   
+#
 #------------------------------------------------------------------------
 
 
@@ -28,38 +28,38 @@ import numpy as np
 import ParCorAna as corAna
 
 class WorkerDataNoCallback( unittest.TestCase ):
-    '''Test WorkerData without a callback. 
+    '''Test WorkerData without a callback.
     '''
     def setUp(self) :
-    	""" 
-    	Method called to prepare the test fixture. This is called immediately 
-    	before calling the test method; any exception raised by this method 
-    	will be considered an error rather than a test failure.  
+        """
+        Method called to prepare the test fixture. This is called immediately
+        before calling the test method; any exception raised by this method
+        will be considered an error rather than a test failure.
 
         Setup the same WorkerData for all the tests - stores a few times, does
         not use a callback
-    	"""
+        """
         self.longMessage = True
         logger = corAna.makeLogger(isTestMode=True,isMaster=True,isViewer=True,isServer=True,rank=0)
         isFirstWorker = True
         self.numTimes = 5
         numDataPointsThisWorker = 1
-        
-        self.workerData = corAna.WorkerData(logger, isFirstWorker, self.numTimes, 
+
+        self.workerData = corAna.WorkerData(logger, isFirstWorker, self.numTimes,
                                             numDataPointsThisWorker, addRemoveCallbackObject = None)
 
     def tearDown(self) :
         """
-        Method called immediately after the test method has been called and 
-        the result recorded. This is called even if the test method raised 
-        an exception, so the implementation in subclasses may need to be 
-        particularly careful about checking internal state. Any exception raised 
-        by this method will be considered an error rather than a test failure. 
-        This method will only be called if the setUp() succeeds, regardless 
-        of the outcome of the test method. 
+        Method called immediately after the test method has been called and
+        the result recorded. This is called even if the test method raised
+        an exception, so the implementation in subclasses may need to be
+        particularly careful about checking internal state. Any exception raised
+        by this method will be considered an error rather than a test failure.
+        This method will only be called if the setUp() succeeds, regardless
+        of the outcome of the test method.
         """
         pass
-        
+
     def test_addDataInOrder(self):
         '''This tests the implementation of WorkerData. I.e, that the _timesXInds grows and that once
         we fill X, we drop the earliest time.
@@ -75,7 +75,7 @@ class WorkerDataNoCallback( unittest.TestCase ):
             self.workerData.addData(tm, data)
             xIdx = self.workerData.tm2idx(tm)
             self.assertEqual(xIdx, tm % self.numTimes, \
-                             "tm2idx(%d)=%r != %d %% %d == %d" % (tm, self.workerData.tm2idx(tm), 
+                             "tm2idx(%d)=%r != %d %% %d == %d" % (tm, self.workerData.tm2idx(tm),
                                                                   tm, self.numTimes, tm%self.numTimes))
             self.assertAlmostEqual(self.workerData.X[xIdx,0], tm, \
                                    msg="data stored for tm=%d at idx=%d wrong" % (tm,xIdx))
@@ -106,7 +106,7 @@ class WorkerDataNoCallback( unittest.TestCase ):
         self.assertEqual(self.workerData._timesXInds.shape[0], initialTSize)
 
         self.workerData._growTimesIfNeeded()
-        
+
         self.assertTrue(self.workerData.empty())
         self.assertEqual(self.workerData._timeAfterEndIdx,0)
         self.assertEqual(self.workerData._timeStartIdx,0)
@@ -145,7 +145,7 @@ class WorkerDataNoCallback( unittest.TestCase ):
         afterXs = [self.workerData.X[idx,0] for tm,idx in self.workerData.timesDataIndexes()]
 
         self.assertItemsEqual(beforeXs, afterXs)
-        
+
         # we should also not be able to add in a time that is less then the earliest time
         self.assertFalse(self.workerData.addData(firstTm-1, mkArrPlus10(max(beforeXs)+20)), msg="added earlier time when filled")
         afterXs = [self.workerData.X[idx,0] for tm,idx in self.workerData.timesDataIndexes()]
@@ -163,7 +163,7 @@ class WorkerDataNoCallback( unittest.TestCase ):
         # but first save where we know the xData should go
         xIndForCurrentMinimumTime = self.workerData.tm2idx(min(tms))
         self.workerData.addData(11, mkArrPlus10(11+20))
-        xIdx = self.workerData.tm2idx(11)        
+        xIdx = self.workerData.tm2idx(11)
         self.assertEqual(xIdx,xIndForCurrentMinimumTime)
         self.assertAlmostEqual(self.workerData.X[xIdx,0], 11+20+10)
         afterXs = [self.workerData.X[idx,0] for tm,idx in self.workerData.timesDataIndexes()]
@@ -176,11 +176,11 @@ class WorkerDataNoCallback( unittest.TestCase ):
 class WorkerDataCallback( unittest.TestCase ) :
 
     def setUp(self) :
-    	""" 
-    	Method called to prepare the test fixture. This is called immediately 
-    	before calling the test method; any exception raised by this method 
-    	will be considered an error rather than a test failure.  
-    	"""
+        """
+        Method called to prepare the test fixture. This is called immediately
+        before calling the test method; any exception raised by this method
+        will be considered an error rather than a test failure.
+        """
         self.longMessage = True
         logger = corAna.makeLogger(isTestMode=True,isMaster=True,isViewer=True,isServer=True,rank=0)
         isFirstWorker = True
@@ -209,22 +209,22 @@ class WorkerDataCallback( unittest.TestCase ) :
                 assert isinstance(tm, int)
                 assert isinstance(dataIdx, int)
                 self.callbacks['add'].append((tm,wd.X[dataIdx,0]))
-                
-        self.workerData = corAna.WorkerData(logger, isFirstWorker, 
-                                            self.numTimes, 
-                                            numDataPointsThisWorker, 
+
+        self.workerData = corAna.WorkerData(logger, isFirstWorker,
+                                            self.numTimes,
+                                            numDataPointsThisWorker,
                                             addRemoveCallbackObject = CallBack(self.callbacks))
 
 
     def tearDown(self) :
         """
-        Method called immediately after the test method has been called and 
-        the result recorded. This is called even if the test method raised 
-        an exception, so the implementation in subclasses may need to be 
-        particularly careful about checking internal state. Any exception raised 
-        by this method will be considered an error rather than a test failure. 
-        This method will only be called if the setUp() succeeds, regardless 
-        of the outcome of the test method. 
+        Method called immediately after the test method has been called and
+        the result recorded. This is called even if the test method raised
+        an exception, so the implementation in subclasses may need to be
+        particularly careful about checking internal state. Any exception raised
+        by this method will be considered an error rather than a test failure.
+        This method will only be called if the setUp() succeeds, regardless
+        of the outcome of the test method.
         """
         pass
 
@@ -328,8 +328,8 @@ def makePairsAnswer(times, data, delays):
             if delay not in delays:
                 continue
             pairs[delay].append((data[idxA],data[idxB]))
-            
-    for delay in pairs:        
+
+    for delay in pairs:
         pairs[delay].sort()
     return pairs
 
@@ -364,7 +364,7 @@ class CorrelationCalcCallback(object):
             if delayToLargeForCurrentData: break
             laterXind = wd.tm2idx(laterTm)
             if laterXind is None: continue
-            pairForMode = (wd.X[xInd,0], wd.X[laterXind,0]) 
+            pairForMode = (wd.X[xInd,0], wd.X[laterXind,0])
             self.tester.assertTrue(pairForMode in self.pairs[delay])
             self.pairs[delay].remove(pairForMode)
 
@@ -375,7 +375,7 @@ class CorrelationCalcCallback(object):
             if delayToLargeForCurrentData: break
             earlierXind = wd.tm2idx(earlierTm)
             if earlierXind is None: continue
-            pairForMode = (wd.X[earlierXind,0], wd.X[xInd,0]) 
+            pairForMode = (wd.X[earlierXind,0], wd.X[xInd,0])
             self.tester.assertTrue(pairForMode in self.pairs[delay])
             self.pairs[delay].remove(pairForMode)
 
@@ -414,23 +414,23 @@ def mkDataAdd10(tm, numDataPointsThisWorker):
 class WorkerDataCorrelationCalc( unittest.TestCase ) :
 
     def setUp(self) :
-    	""" 
-    	Method called to prepare the test fixture. This is called immediately 
-    	before calling the test method; any exception raised by this method 
-    	will be considered an error rather than a test failure.  
-    	"""
+        """
+        Method called to prepare the test fixture. This is called immediately
+        before calling the test method; any exception raised by this method
+        will be considered an error rather than a test failure.
+        """
         pass
 
 
     def tearDown(self) :
         """
-        Method called immediately after the test method has been called and 
-        the result recorded. This is called even if the test method raised 
-        an exception, so the implementation in subclasses may need to be 
-        particularly careful about checking internal state. Any exception raised 
-        by this method will be considered an error rather than a test failure. 
-        This method will only be called if the setUp() succeeds, regardless 
-        of the outcome of the test method. 
+        Method called immediately after the test method has been called and
+        the result recorded. This is called even if the test method raised
+        an exception, so the implementation in subclasses may need to be
+        particularly careful about checking internal state. Any exception raised
+        by this method will be considered an error rather than a test failure.
+        This method will only be called if the setUp() succeeds, regardless
+        of the outcome of the test method.
         """
         pass
 
@@ -446,12 +446,12 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
         delays = [1,2,3,5,8,10]
         corrCallback = CorrelationCalcCallback(delays, doRemove=False, tester=self)
 
-        workerData = corAna.WorkerData(logger, isFirstWorker, 
-                                       numTimes, 
-                                       numDataPointsThisWorker, 
+        workerData = corAna.WorkerData(logger, isFirstWorker,
+                                       numTimes,
+                                       numDataPointsThisWorker,
                                        storeDtype = storeDtype,
                                        addRemoveCallbackObject = corrCallback)
-        
+
         times = range(37)
         datas = [mkDataAdd10(tm, numDataPointsThisWorker) for tm in times]
         datasForAnswer = [arr[0] for arr in datas]
@@ -461,16 +461,16 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
 
         answer = makePairsAnswer(times, datasForAnswer, delays)
         callbackAnswer = corrCallback.pairs
-        
+
         self.assertEqual(answer.keys(), callbackAnswer.keys())
         for key, dataPairsAnswer in answer.iteritems():
             dataPairsCallback = callbackAnswer[key]
             self.assertEqual(len(dataPairsCallback), len(dataPairsAnswer), msg="delay=%d, answer=%r callback=%r" % \
                              (key, dataPairsAnswer, dataPairsCallback))
-        
+
 
     def test_noRemovePermuteGetAll(self):
-        '''Mix up the order a bit, 
+        '''Mix up the order a bit,
         '''
         longMessage = True
         logger = corAna.makeLogger(isTestMode=True,isMaster=True,isViewer=True,isServer=True,rank=0)
@@ -481,16 +481,16 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
         delays = [1,2,3,5,8,10]
         corrCallback = CorrelationCalcCallback(delays, doRemove=False, tester=self)
 
-        workerData = corAna.WorkerData(logger, isFirstWorker, 
-                                       numTimes, 
-                                       numDataPointsThisWorker, 
+        workerData = corAna.WorkerData(logger, isFirstWorker,
+                                       numTimes,
+                                       numDataPointsThisWorker,
                                        storeDtype = storeDtype,
                                        addRemoveCallbackObject = corrCallback)
-        
+
         times = range(37)
         datas = [mkDataAdd10(tm, numDataPointsThisWorker) for tm in times]
         datasForAnswer = [arr[0] for arr in datas]
-        
+
         swapTimes = [tm for tm in times]
         swapDatas = [arr.copy() for arr in datas]
 
@@ -510,13 +510,13 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
 
         answer = makePairsAnswer(times, datasForAnswer, delays)
         callbackAnswer = corrCallback.pairs
-        
+
         self.assertEqual(answer.keys(), callbackAnswer.keys())
         for key, dataPairsAnswer in answer.iteritems():
             dataPairsCallback = callbackAnswer[key]
             self.assertEqual(len(dataPairsCallback), len(dataPairsAnswer), msg="delay=%d, answer=%r callback=%r" % \
                              (key, dataPairsAnswer, dataPairsCallback))
-        
+
 
     def test_noRemoveGetSome(self):
         '''Make num times too short to catch all delays
@@ -530,17 +530,17 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
         delays = [1,2,3,5,8, 10]  # with numTimes == 5, won't get anything for 5,8,10
         corrCallback = CorrelationCalcCallback(delays, doRemove=False, tester=self)
 
-        workerData = corAna.WorkerData(logger, isFirstWorker, 
-                                       numTimes, 
-                                       numDataPointsThisWorker, 
+        workerData = corAna.WorkerData(logger, isFirstWorker,
+                                       numTimes,
+                                       numDataPointsThisWorker,
                                        storeDtype = storeDtype,
                                        addRemoveCallbackObject = corrCallback)
-        
+
         def mkDataAdd10(tm, numDataPointsThisWorker):
             arr = np.zeros(numDataPointsThisWorker)
             arr[:]=tm+10
             return arr
-            
+
         times = range(37)
         datas = [mkDataAdd10(tm, numDataPointsThisWorker) for tm in times]
         datasForAnswer = [arr[0] for arr in datas]
@@ -550,7 +550,7 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
 
         answer = makePairsAnswer(times, datasForAnswer, delays)
         callbackAnswer = corrCallback.pairs
-        
+
         self.assertEqual(answer.keys(), callbackAnswer.keys())
         for key, dataPairsAnswer in answer.iteritems():
             dataPairsCallback = callbackAnswer[key]
@@ -572,12 +572,12 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
         delays = [1,2,3,5,8,10]  # with numTimes == 5, won't get anything for 5,8,10
         corrCallback = CorrelationCalcCallback(delays, doRemove=True, tester=self)
 
-        workerData = corAna.WorkerData(logger, isFirstWorker, 
-                                       numTimes, 
-                                       numDataPointsThisWorker, 
+        workerData = corAna.WorkerData(logger, isFirstWorker,
+                                       numTimes,
+                                       numDataPointsThisWorker,
                                        storeDtype = storeDtype,
                                        addRemoveCallbackObject = corrCallback)
-        
+
         times = range(37)
         datas = [mkDataAdd10(tm, numDataPointsThisWorker) for tm in times]
         datasForAnswer = [arr[0] for arr in datas]
@@ -595,7 +595,7 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
             dataPairsCallback = callbackAnswer[key]
             self.assertEqual(len(dataPairsCallback), len(dataPairsAnswer), msg="delay=%d, answer=%r callback=%r" % \
                              (key, dataPairsAnswer, dataPairsCallback))
-        
+
 
 def debug():
     '''for running tests interatively.
@@ -606,7 +606,7 @@ def debug():
       %pdb
       ut.debug()
 
-    In the above example, you will break in unitTest, do one 'up' command to get back to where 
+    In the above example, you will break in unitTest, do one 'up' command to get back to where
     you were in your test
     '''
     suite = unittest.TestLoader().loadTestsFromModule(sys.modules[__name__])
