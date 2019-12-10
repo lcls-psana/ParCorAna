@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 import numpy as np
-import Exceptions
+from . import Exceptions
 import logging
 import math
 

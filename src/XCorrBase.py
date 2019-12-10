@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from mpi4py import MPI
 import numpy as np
 import os
@@ -14,7 +15,7 @@ from ParCorAna.WorkerData import WorkerData
 import ParCorAna.Timing as Timing
 import ParCorAna.CommSystemUtil as CommSystemUtil
 import ParCorAna as corAna
-from EventIter import EventIter
+from .EventIter import EventIter
 
 #################################
 # utitlity functions users may use

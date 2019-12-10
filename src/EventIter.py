@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 import psana
 import numpy as np
 from pprint import pprint
 import StringIO
-import PsanaUtil
+from . import PsanaUtil
 
 class EventData(object):
     '''Object returned by EventIter. 

@@ -378,19 +378,20 @@ Below we take a top down approach to summarizing the components of the framework
 ***  calls self.userObj.fwArrayNames(): users code implements this function. This is
      how framework knows how many arrays user F function is computing    
 '''
-from CommSystem import identifyCommSubsystems, identifyServerRanks
-from CommSystem import RunServer, RunMaster, RunWorker, RunViewer
-from CommSystem import runCommSystem
-from CommSystem import CommSystemFramework
-from CommSystemUtil import checkCountsOffsets, divideAmongWorkers, makeLogger
-from CommSystemUtil import checkParams, formatFileName, imgBoundBox, replaceSubsetsWithAverage
-from MessageBuffers import SM_MsgBuffer, MVW_MsgBuffer
-from PsanaUtil import parseDataSetString, makePsanaOptions, psanaNdArrays
-from PsanaUtil import getSortedCountersBasedOnSecNsecAtHertz
-from XCorrBase import makeDelayList, writeToH5Group, XCorrBase, writeConfig
-from WorkerData import WorkerData
-import maskColorImgNdarr
-from Exceptions import *
+from __future__ import absolute_import
+from .CommSystem import identifyCommSubsystems, identifyServerRanks
+from .CommSystem import RunServer, RunMaster, RunWorker, RunViewer
+from .CommSystem import runCommSystem
+from .CommSystem import CommSystemFramework
+from .CommSystemUtil import checkCountsOffsets, divideAmongWorkers, makeLogger
+from .CommSystemUtil import checkParams, formatFileName, imgBoundBox, replaceSubsetsWithAverage
+from .MessageBuffers import SM_MsgBuffer, MVW_MsgBuffer
+from .PsanaUtil import parseDataSetString, makePsanaOptions, psanaNdArrays
+from .PsanaUtil import getSortedCountersBasedOnSecNsecAtHertz
+from .XCorrBase import makeDelayList, writeToH5Group, XCorrBase, writeConfig
+from .WorkerData import WorkerData
+from . import maskColorImgNdarr
+from .Exceptions import *
 
 __all__ = ['SM_MsgBuffer', 'MVW_MsgBuffer', 
            'RunServer', 'RunMaster', 'RunViewer', 'RunWorker',

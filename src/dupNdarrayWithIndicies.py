@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 import numpy as np
 import psana
-from PsanaUtil import psanaNdArrays
+from .PsanaUtil import psanaNdArrays
 
 '''psana module to track how pixels in ndarrays get set in 
 image producer 2D arrays.

@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 import os
 import sys
 import numpy as np
@@ -8,7 +9,7 @@ import scipy.ndimage
 from PSCalib.CalibFileFinder import CalibFileFinder
 from PSCalib.GeometryAccess import GeometryAccess, img_from_pixel_arrays
 import scipy.ndimage as ndimage
-import PsanaUtil
+from . import PsanaUtil
 
 def debugOut(flag, msg):
     if flag:

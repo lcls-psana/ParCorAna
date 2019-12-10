@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 ## system
 import mpi4py
 from mpi4py import MPI
@@ -11,12 +12,12 @@ import collections
 import logging
 
 ## this package
-import CommSystemUtil
-import PsanaUtil
-from MessageBuffers import SM_MsgBuffer, MVW_MsgBuffer
-import Timing
-from XCorrBase import XCorrBase
-import Counter120hz
+from . import CommSystemUtil
+from . import PsanaUtil
+from .MessageBuffers import SM_MsgBuffer, MVW_MsgBuffer
+from . import Timing
+from .XCorrBase import XCorrBase
+from . import Counter120hz
 
 MPI4PY_200 = mpi4py.__version__.startswith('2')
 
@@ -409,7 +410,7 @@ class ScatterDataQueue(object):
         assert len(self.iterDataQueue)==len(self.scatterDataQueue), "ScatterDataQueue: internal lists are not the same length"
         while num > 0:
             try:
-                datum = dataGen.next()
+                datum = next(dataGen)
             except StopIteration:
                 self.logger.debug("ScatterDataQueue: addFrom: dataGen is empty")
                 return
