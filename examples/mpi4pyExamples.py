@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 from mpi4py import MPI
 import time
@@ -26,7 +27,7 @@ def collectiveCommunicationInSubGroup():
             recvBuffer = np.zeros(5,np.float32)
         serverRankBandWorkersComm.Scatterv([None, counts, offsets, MPI.FLOAT],
                                            recvBuffer, root = serverBrankInNewComm)
-        print "worker with world rank=%d received: %r" % (worldRank, recvBuffer)
+        print("worker with world rank=%d received: %r" % (worldRank, recvBuffer))
         
         
 def MPIType(verbose=True):
@@ -61,10 +62,10 @@ def MPIType(verbose=True):
     if rank == 1:
         MPI.COMM_WORLD.Recv([msgbuffer, MPIDataType], source = 0)
         if verbose:
-            print "rank 1 received msgbuffer = %d %d %e" % \
+            print("rank 1 received msgbuffer = %d %d %e" % \
                 (msgbuffer[0]['msgtag'],
                  msgbuffer[0]['counter'],
-                 msgbuffer[0]['energy'])
+                 msgbuffer[0]['energy']))
 
     MPIDataType.Free()
     
@@ -98,5 +99,5 @@ if __name__ == '__main__':
     MPI.COMM_WORLD.Barrier()
     rank = MPI.COMM_WORLD.Get_rank()
     for key,val in timingDict.iteritems():
-        print "rank=%d: Timing Dict says %d calls to %s take %.2f sec" % \
-        (rank, val['total_calls'], key, val['total_time'])
+        print("rank=%d: Timing Dict says %d calls to %s take %.2f sec" % \
+        (rank, val['total_calls'], key, val['total_time']))

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import psana
 import ParCorAna
@@ -248,10 +249,10 @@ user_params['ipimb_srcs'] = []
 # print the content of the two dictionaries.
 
 if __name__ == '__main__':
-    print "######## system_params dict #########"
+    print("######## system_params dict #########")
     from pprint import pprint
     pprint(system_params)
-    print "######## user_params dict #########"
+    print("######## user_params dict #########")
     from pprint import pprint
     pprint(user_params)
     ParCorAna.checkParams(system_params, user_params, checkUserParams=True)

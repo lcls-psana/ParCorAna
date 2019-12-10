@@ -1,3 +1,4 @@
+from __future__ import print_function
 #--------------------------------------------------------------------------
 # Description:
 #   Test script for ParCorAna
@@ -34,7 +35,7 @@ if not NOCLEAN:
 ### helper function
 def runCmd(cmd, verbose=True):
     o,e,retcode = ptl.cmdTimeOutWithReturnCode(cmd, seconds=10*60)
-    if verbose: print "---  ran cmd: %s" % cmd
+    if verbose: print("---  ran cmd: %s" % cmd)
     return retcode
 
 def removeAllInProgressFromParentDir(fname):
@@ -497,7 +498,7 @@ class Cspad2x2( unittest.TestCase ) :
         h5A = h5outputFile
         h5B = self.formatDict['h5outputFile'] % self.formatDict['testName']
         cmd = 'cmpParCorAnaH5OutputPy -i serversRoundRobin,userClass %s %s' % (h5A, h5B)
-        print "running cmd=%s" % cmd
+        print("running cmd=%s" % cmd)
         o,e,retcode = ptl.cmdTimeOutWithReturnCode(cmd)
         self.assertEqual(0, retcode, msg="comparing windowNoRoundRobin to atEnd with numTimes=%d failed.\ncmp cmd=%s\nconfigA=%s\nconfigB=%s" % \
                          (self.formatDict['numTimes'], cmd, configFileNameA, configFileNameB))

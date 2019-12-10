@@ -1,4 +1,5 @@
 #!@PYTHON@
+from __future__ import print_function
 
 import sys
 import argparse
@@ -115,7 +116,7 @@ def diffGroups(grA, grB, verbose, indentLevel, ignores):
                                           
 def cmpH5Files(fileA, fileB, verbose, ignores):
   if verbose:
-    print "comparing:\nA: %s\nB: %s" % (fileA, fileB)
+    print("comparing:\nA: %s\nB: %s" % (fileA, fileB))
   h5A = h5py.File(fileA,'r')
   h5B = h5py.File(fileB,'r')
   rootA = h5A['/']

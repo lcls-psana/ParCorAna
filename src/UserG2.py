@@ -11,6 +11,7 @@
 * Incrementally and windowed - the same result as at the end, but done in
   an ongoing fashion.
 '''
+from __future__ import print_function
 
 import os
 import numpy as np
@@ -340,7 +341,7 @@ class G2Common(object):
                 counterB = sortedEventIds[idxB]['counter']
                 delay = counterB - counterA
                 if delay == 0:
-                    print "warning: unexpected - same counter twice in data - idxA=%d, idxB=%d" % (idxA, idxB)
+                    print("warning: unexpected - same counter twice in data - idxA=%d, idxB=%d" % (idxA, idxB))
                     continue
                 if delay not in self.delays: 
                     continue

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mpi4py import MPI
 import numpy as np
 import os
@@ -63,7 +64,7 @@ def makeDelayList(start, stop, num, spacing, logbase=np.e):
     numHigh = 2*num
     delaysHigh = getUniqueRoundedIntegerDelays(start, stop, numHigh, spacing, logbase)
     while len(delaysHigh) < num:
-        print "numHigh=%d len(delaysHigh)=%d" % (numHigh, len(delaysHigh))
+        print("numHigh=%d len(delaysHigh)=%d" % (numHigh, len(delaysHigh)))
         numHigh = 2*numHigh
         delaysHigh = getUniqueRoundedIntegerDelays(start, stop, numHigh, spacing, logbase)
     if len(delaysHigh)==num:

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import sys
 import numpy as np
@@ -42,7 +43,7 @@ def makeColorArray(array, numColor):
     N = len(sortedInds)
     if numColor > N:
         numColor = N
-        print "warning: reduced numColor to %d for small amount of data" % numColor
+        print("warning: reduced numColor to %d for small amount of data" % numColor)
 
     coloredFlat = np.zeros(N, np.int32)
     ind0 = 0
@@ -265,7 +266,7 @@ def turnOnTestPixels(arr,avg, numPixels=10, verbose=False):
     if verbose:        
         for k in range(len(shapedIndicies[0])):
             inds=[indList[k] for indList in shapedIndicies]
-            print "turnOnTestPixels: Turned on index: (%s)" % ','.join(map(str,inds))
+            print("turnOnTestPixels: Turned on index: (%s)" % ','.join(map(str,inds)))
 
 def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300, 
                      color=6, finecolor=18, basename=None, geom=None, debug=False, force=False,
@@ -291,7 +292,7 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
             basename = basename[0:-1]
         basename = basename.replace('_-','-')
         basename = basename.replace('_DetInfo_','_')
-        print "INFO: generating basename=%s from dsetstring=%s and src=%s" % (basename, dsetstring, srcString)
+        print("INFO: generating basename=%s from dsetstring=%s and src=%s" % (basename, dsetstring, srcString))
         return basename
             
     #### start code ####
@@ -334,26 +335,26 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
 
     if iX is not None and iY is not None:
         saveNdarr2ImgMapping(iX,iY,iXfname,iYfname)
-        print "*** Analyzing ndarr -> img mapping from geometry file: ***"
+        print("*** Analyzing ndarr -> img mapping from geometry file: ***")
         manyToOne = findImageManyToOne(iX,iY)
         if len(manyToOne)>0:
-            print "INFO: There are %d image pixels with more than one ndarr pixel mapped to it" % len(manyToOne)
+            print("INFO: There are %d image pixels with more than one ndarr pixel mapped to it" % len(manyToOne))
             for imagePos, ndarrList in manyToOne.iteritems():
                 points = arrIndexListsToPoints(ndarrList)
                 points = [','.join(map(str,point)) for point in points]
 #                print "image pixel = %r  has ndarray elements = (%s)" % (imagePos, '), ('.join(points))
         else:
-            print "INFO: all ndarr elements are mapped to a unique image pixel"
+            print("INFO: all ndarr elements are mapped to a unique image pixel")
         imageGaps = findImageGaps(iX, iY)
         if len(imageGaps)>0:
-            print "INFO: There appear to be %d gaps in the image, pixels in detctor areas for which no ndarr element is mapped" % \
-                len(imageGaps)
+            print("INFO: There appear to be %d gaps in the image, pixels in detctor areas for which no ndarr element is mapped" % \
+                len(imageGaps))
             for gap in imageGaps:
                 msg = '  gap:'
                 for point in arrIndexListsToPoints(gap):
                     msg += ' (%s)' % ','.join(map(str,point))
  #               print msg
-        print "*** done analyzing ndarr -> img mapping. Computing average. ***"
+        print("*** done analyzing ndarr -> img mapping. Computing average. ***")
 
     # make a psana configuration to load ndarray producer and ndarrCalib to go through
     # events and make an average
@@ -406,7 +407,7 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
         msg += "last event had: keys:\n  %s\n" % '\n  '.join(map(str,evt.keys()))
         raise Exception(msg)
         
-    print "Formed ndarr average - saving."
+    print("Formed ndarr average - saving.")
     fout = file(avgNdarrFname,'w')
     np.save(fout, ndarrAverage)
     fout.close()
@@ -416,48 +417,48 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
         iX, iY = makeNdarrImageMappingFor2D(ndarrAverage.shape)
         saveNdarr2ImgMapping(iX, iY, iXfname, iYfname)
 
-    print "saving img average"
+    print("saving img average")
     fout = file(avgImgFname,'w')
     imgAverage = ndarr2img(ndarrAverage, iX, iY)
     np.save(fout, imgAverage)
     fout.close()
 
     maskNdarr = np.ones(ndarrAverage.shape,np.int8)
-    print "saving a mask"
+    print("saving a mask")
     fout = file(maskNdarrFname,'w')
     np.save(fout, maskNdarr)
     fout.close()
 
     testmaskNdarr = np.zeros(ndarrAverage.shape,np.int8)
     turnOnTestPixels(testmaskNdarr, ndarrAverage, numTestPixels, verboseForTestPixels)
-    print "saving a testmask"
+    print("saving a testmask")
     fout = file(testmaskNdarrFname,'w')
     np.save(fout, testmaskNdarr)
     fout.close()
 
-    print "saving img mask"
+    print("saving img mask")
     fout = file(maskImgFname,'w')
     np.save(fout, ndarr2img(maskNdarr, iX, iY))
     fout.close()
     
-    print "making ndarr color file and saving"
+    print("making ndarr color file and saving")
     ndarrColor = makeColorArray(ndarrAverage, color)
     fout = file(colorNdarrFname, 'w')
     np.save(fout, ndarrColor)
     fout.close()
 
-    print "saving to img"
+    print("saving to img")
     fout = file(colorImgFname, 'w')
     np.save(fout, ndarr2img(ndarrColor, iX, iY))
     fout.close()
     
-    print "making ndarr finecolor file with %d colors and saving" % finecolor
+    print("making ndarr finecolor file with %d colors and saving" % finecolor)
     finendarrColor = makeColorArray(ndarrAverage, finecolor)
     fout = file(finecolorNdarrFname, 'w')
     np.save(fout, finendarrColor)
     fout.close()
 
-    print "saving to img"
+    print("saving to img")
     fout = file(finecolorImgFname, 'w')
     np.save(fout, ndarr2img(finendarrColor, iX, iY))
     fout.close()
