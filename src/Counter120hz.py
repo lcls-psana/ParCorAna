@@ -1,3 +1,4 @@
+from __future__ import division
 class Counter120hz(object):
     '''make counter
 

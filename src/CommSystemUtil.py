@@ -1,5 +1,6 @@
 '''Utility functions for CommSystem
 '''
+from __future__ import division
 import math
 import logging
 import time
@@ -285,7 +286,7 @@ def replaceSubsetsWithAverage(A, labels, label2total=None):
         for label,count in enumerate(labelCounts):
             label2total[label]=count
     groupedAverages = np.bincount(labels.flatten(), A.flatten())
-    for label, count in label2total.iteritems():
+    for label, count in label2total.items():
         if label >=0 and label < len(groupedAverages):
             groupedAverages[label] /= float(count)
     avgA_dtype = np.float32

@@ -27,8 +27,8 @@ def getSystemAndUserParams(filename):
     configGlobals={'__name__':globalName}
     configLocals={}
     execfile(filename, configGlobals, configLocals)
-    assert 'system_params' in configLocals.keys(), "config file did not define 'system_params'"
-    assert 'user_params' in configLocals.keys(), "config file did not define 'user_params'"
+    assert 'system_params' in list(configLocals.keys()), "config file did not define 'system_params'"
+    assert 'user_params' in list(configLocals.keys()), "config file did not define 'user_params'"
     system_params = configLocals['system_params']
     user_params = configLocals['user_params']
     assert isinstance(system_params, dict), "system_params is not a dict"

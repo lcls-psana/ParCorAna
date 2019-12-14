@@ -50,8 +50,8 @@ class WorkerData(object):
             maxwidth = 2
             def fmt(x):
                 return str(x).rjust(maxwidth+1)
-            tms = map(fmt,self._timesXInds[self._timeStartIdx:self._timeAfterEndIdx:,0])
-            xInds = map(fmt, self._timesXInds[self._timeStartIdx:self._timeAfterEndIdx,1])
+            tms = list(map(fmt,self._timesXInds[self._timeStartIdx:self._timeAfterEndIdx:,0]))
+            xInds = list(map(fmt, self._timesXInds[self._timeStartIdx:self._timeAfterEndIdx,1]))
             res += "\n_timesXInds[%d:%d,TIME_COL]=%s" % (self._timeStartIdx, self._timeAfterEndIdx,' '.join(tms))
             res += "\n_timesXInds[%d:%d,XIND_COL]=%s" % (self._timeStartIdx, self._timeAfterEndIdx,' '.join(xInds))
         return res
@@ -60,7 +60,7 @@ class WorkerData(object):
         '''iterator over tm,idx pairs, the times in order, with indicies into X
         of where the data for that time is
         '''
-        for idx in xrange(self._timeStartIdx, self._timeAfterEndIdx):
+        for idx in range(self._timeStartIdx, self._timeAfterEndIdx):
             tm, xIndex = self._timesXInds[idx,:]
             if xIndex != WorkerData.INVALID_INDEX:
                 yield tm, xIndex

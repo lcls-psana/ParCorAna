@@ -12,6 +12,7 @@
   an ongoing fashion.
 '''
 from __future__ import print_function
+from __future__ import division
 
 import os
 import numpy as np
@@ -45,7 +46,7 @@ def loadColorFile(colorFile, maskNdarrayCoords, MaxColor):
     assert maskNdarrayCoords.dtype == np.bool
     color_ndarrayCoords *= maskNdarrayCoords
     color2total = sumColoredPixels(color_ndarrayCoords)
-    colors = color2total.keys()
+    colors = list(color2total.keys())
     colors.sort()
     return color_ndarrayCoords, color2total, colors
 
@@ -357,7 +358,7 @@ class G2Common(object):
         name2delay2ndarray = {}
         for nm,delay2masked in zip(['G2','IF','IP'],[G2,IF,IP]):
             name2delay2ndarray[nm] = {}
-            for delay,masked in delay2masked.iteritems():
+            for delay,masked in delay2masked.items():
                 name2delay2ndarray[nm][delay]=np.zeros(self.maskNdarrayCoords.shape, np.float32)
                 name2delay2ndarray[nm][delay][self.maskNdarrayCoords] = masked[:]
             
@@ -604,13 +605,13 @@ class G2Common(object):
             assert goodPixels.dtype == np.bool
             newColorLabeling = goodPixels * oldColorLabeling
             newColor2total = sumColoredPixels(newColorLabeling)
-            newColors = newColor2total.keys()
+            newColors = list(newColor2total.keys())
             newColors.sort()
             return newColorLabeling, newColor2total, newColors
         
         def calcDropedPixels(oldColor2total, newColor2total):
-            oldColors = oldColor2total.keys()
-            newColors = newColor2total.keys()
+            oldColors = list(oldColor2total.keys())
+            newColors = list(newColor2total.keys())
             numberDroppedPixels = 0
             droppedColors = set(oldColors).difference(set(newColors))
             for color in droppedColors:

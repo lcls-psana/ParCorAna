@@ -1,11 +1,14 @@
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
 from mpi4py import MPI
 import numpy as np
 import os
 import time
 import shutil
-import StringIO
+import io
 import pprint
 import logging
 
@@ -54,7 +57,7 @@ def makeDelayList(start, stop, num, spacing, logbase=np.e):
     assert num > 0
     assert start > 0
     if num >= (stop-start+1):
-        return np.array(range(start,stop+1),dtype=np.int32)
+        return np.array(list(range(start,stop+1)),dtype=np.int32)
     candDelays = getUniqueRoundedIntegerDelays(start, stop, num, spacing, logbase)
     if len(candDelays)==num:
         return candDelays
@@ -76,7 +79,7 @@ def makeDelayList(start, stop, num, spacing, logbase=np.e):
     # return however many delays we are generating, should be close to what was requested).
     maxIter = 20
     curIter = 1
-    candNum = (numLow + numHigh)/2
+    candNum = (numLow + numHigh)//2
     candDelays = getUniqueRoundedIntegerDelays(start, stop, candNum, spacing, logbase)
     while (len(candDelays) != num) and (curIter <= maxIter):
 #        print "iter=%3d low=%3d high=%3d cand=%3d candDelays=%3d" % (curIter, numLow, numHigh, candNum, len(candDelays))
@@ -85,7 +88,7 @@ def makeDelayList(start, stop, num, spacing, logbase=np.e):
             numHigh = candNum
         else:
             numLow = candNum
-        candNum = (numLow + numHigh)/2
+        candNum = (numLow + numHigh)//2
         candDelays = getUniqueRoundedIntegerDelays(start, stop, candNum, spacing, logbase)
     return candDelays
             
@@ -99,9 +102,9 @@ def writeToH5Group(h5Group, name2delay2ndarray):
 
     That is for each pair that indexes the name2delay2ndarray 2D dict, we write a ndarray.
     '''
-    for nm, delay2ndarrayDict in name2delay2ndarray.iteritems():
+    for nm, delay2ndarrayDict in name2delay2ndarray.items():
         nmGroup = h5Group.create_group(nm)
-        for delay, ndarray in delay2ndarrayDict.iteritems():
+        for delay, ndarray in delay2ndarrayDict.items():
             dataSetName = 'delay_%6.6d' % delay
             dataSetShape = ndarray.shape
             dataSetDType = ndarray.dtype
@@ -109,7 +112,7 @@ def writeToH5Group(h5Group, name2delay2ndarray):
             delayDataset[:] = ndarray[:]
 
 def writeConfig(h5file, system_params, user_params):
-    if 'system' in h5file.keys():
+    if 'system' in list(h5file.keys()):
         h5Group = h5file['system']
     else:
         h5Group = h5file.create_group('system')
@@ -118,7 +121,7 @@ def writeConfig(h5file, system_params, user_params):
     fname2type = {'maskNdarrayCoords':np.int8, 'colorNdarrayCoords':np.int32, 'colorFineNdarrayCoords':np.int32}
     for configDict, h5Group in zip([system_params, user_params],
                                    [systemParamsGroup, userParamsGroup]):
-        configKeys = configDict.keys()
+        configKeys = list(configDict.keys())
         configKeys.sort()
         for key in configKeys:
             if key in fname2type:
@@ -323,8 +326,8 @@ class XCorrBase(object):
     def checkUserWorkerCalcArgs(self, name2array, counts, int8array):
         assert set(name2array.keys())==set(self.arrayNames), \
             "array names returned by workerCalc != expected named. Returned=%s != expected=%s " % \
-            (str(name2array.keys()), str(self.arrayNames))
-        for nm, array in name2array.iteritems():
+            (str(list(name2array.keys())), str(self.arrayNames))
+        for nm, array in name2array.items():
             assert array.shape == (self.numDelays, self.elementsThisWorker,), "user workerCalc array %s has wrong shape. shape is %s != %s" % \
                                  (nm, array.shape, (self.elementsThisWorker,))
             assert array.dtype == np.float32, "workerCalc array=%s does not have type np.float32, it is %r" % array.dtype

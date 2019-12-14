@@ -1,5 +1,6 @@
 #!@PYTHON@
 from __future__ import print_function
+from __future__ import division
 
 import sys
 import argparse
@@ -70,8 +71,8 @@ def diffDatasets(hdr, dA, dB, verbose, indentLevel):
 def diffGroups(grA, grB, verbose, indentLevel, ignores):
   indentA = '  ' * indentLevel
   indentB = '  ' * (1+indentLevel)
-  keysA = grA.keys()
-  keysB = grB.keys()
+  keysA = list(grA.keys())
+  keysB = list(grB.keys())
   onlyA, both, onlyB = partitionSets(keysA, keysB)
   if len(ignores)>0:
     onlyA = [nm for nm in onlyA if nm not in ignores]

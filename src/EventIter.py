@@ -1,8 +1,11 @@
 from __future__ import absolute_import
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
 import psana
 import numpy as np
 from pprint import pprint
-import StringIO
+import io
 from . import PsanaUtil
 
 class EventData(object):
@@ -82,7 +85,7 @@ class EventIter(object):
         psanaOptions = system_params['psanaOptions']
         psana.setOptions(psanaOptions)
 
-        msgbuffer = StringIO.StringIO()
+        msgbuffer = io.StringIO()
         pprint(psanaOptions, msgbuffer)
         logger.debug('initialized psana with options:\n%s' % msgbuffer.getvalue())
 
@@ -103,8 +106,8 @@ class EventIter(object):
                     daqStreams = [stream for stream in streams if stream < 80]
                     ctrlStreams = [stream for stream in streams if stream >= 80]
                 else:
-                    daqStreams = range(80)
-                    ctrlStreams = range(80,160)
+                    daqStreams = list(range(80))
+                    ctrlStreams = list(range(80,160))
                 thisServerDaqStreams = [daqStreams[k] for k in range(self.serverNumber, len(daqStreams), numServers)]
                 assert len(thisServerDaqStreams)>0, "This server (number=%d) has no DAQ streams to process. set config parmeter numservers <= number of DAQ streams (streams < 80)" % self.serverNumber
                 thisServerStreams = thisServerDaqStreams + ctrlStreams

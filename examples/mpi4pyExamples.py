@@ -16,7 +16,7 @@ def collectiveCommunicationInSubGroup():
     counts = (0,6,5)
     offsets = (0,0,6)
     if worldRank == serverRankB:
-        dataToScatter = np.array(range(11), dtype=np.float32)
+        dataToScatter = np.array(list(range(11)), dtype=np.float32)
         recvBuffer = np.zeros(0,np.float32)
         serverRankBandWorkersComm.Scatterv([dataToScatter, counts, offsets, MPI.FLOAT], 
                                            recvBuffer, root = serverBrankInNewComm)
@@ -98,6 +98,6 @@ if __name__ == '__main__':
         timedMPIType(verbose=False)
     MPI.COMM_WORLD.Barrier()
     rank = MPI.COMM_WORLD.Get_rank()
-    for key,val in timingDict.iteritems():
+    for key,val in timingDict.items():
         print("rank=%d: Timing Dict says %d calls to %s take %.2f sec" % \
         (rank, val['total_calls'], key, val['total_time']))

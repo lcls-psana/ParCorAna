@@ -9,12 +9,14 @@ from __future__ import print_function
 #--------------------------------
 #  Imports of standard modules --
 #--------------------------------
+from future import standard_library
+standard_library.install_aliases()
 import sys
 import os
 import logging
 import tempfile
 import unittest
-from cStringIO import StringIO
+from io import StringIO
 import numpy as np
 import h5py
 import glob
@@ -343,7 +345,7 @@ class Cspad2x2( unittest.TestCase ) :
 
                  'ParCorAnaTestAnswers/g2calc_cspad2x2_windowNoRoundRobin_xcsi0314-r0178_v0.h5':    '112d83b2d0e7ee545e26b07a27005fa9',
         }
-        for fname, prev_md5 in md5sums.iteritems():
+        for fname, prev_md5 in md5sums.items():
             fullFname = os.path.join(self.dataDir,fname)
             assert os.path.exists(fullFname)
             cur_md5 = ptl.get_md5sum(fullFname)
@@ -522,7 +524,7 @@ class UtilFunctions( unittest.TestCase ) :
         self.assertEqual(len(delays),100)
 
     def test_replaceSubsetsWithAverage(self):        
-        A = np.array(range(15))
+        A = np.array(list(range(15)))
         A.resize((3,5))
         labels = np.array([1]*5 + [2]*5 + [3]*5, np.int)
         labels.resize((3,5))
@@ -546,7 +548,7 @@ class UtilFunctions( unittest.TestCase ) :
         self.assertEqual(avgA.dtype, np.float64)
 
     def test_replaceSubsetsWithAverageOddShapes(self):        
-        A = np.array(range(15))
+        A = np.array(list(range(15)))
         A.resize((3,5))
         labels = np.array([0]*2 + [2]*5 + [4]*5 + [6]*3, np.int)
         labels.resize((3,5))
@@ -571,7 +573,7 @@ class UtilFunctions( unittest.TestCase ) :
         self.assertAlmostEqual(avgA[2,4], 13.0)
 
     def test_replaceSubsetsWithAverageOddShapesAndWithCounts(self):        
-        A = np.array(range(15))
+        A = np.array(list(range(15)))
         A.resize((3,5))
         labels = np.array([0]*2 + [2]*5 + [4]*5 + [6]*3, np.int)
         labels.resize((3,5))

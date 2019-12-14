@@ -1,5 +1,6 @@
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import division
 import os
 import sys
 import numpy as np
@@ -133,10 +134,10 @@ def findImageManyToOne(iX, iY):
             pos2ndarr[imagePos] = [ndarrFlatIdx]
 
     manyToOneImagePos = dict([(imagePos, ndarrMappedTo) \
-                              for imagePos,ndarrMappedTo in pos2ndarr.iteritems() \
+                              for imagePos,ndarrMappedTo in pos2ndarr.items() \
                               if len(ndarrMappedTo)>1 ])
     newManyToOneImagePos = {}
-    for imagePos, flatNdarrIndicies in manyToOneImagePos.iteritems():
+    for imagePos, flatNdarrIndicies in manyToOneImagePos.items():
         newManyToOneImagePos[imagePos] = np.unravel_index(flatNdarrIndicies,
                                                           iX.shape)
     return newManyToOneImagePos
@@ -262,7 +263,7 @@ def turnOnTestPixels(arr,avg, numPixels=10, verbose=False):
         ind0 = max(0,ind0-(ind1-N))
         ind1 = N
     ind0 = max(0,ind0)
-    shapedIndicies = np.unravel_index(range(ind0,ind1),avg.shape)
+    shapedIndicies = np.unravel_index(list(range(ind0,ind1)),avg.shape)
     arr[shapedIndicies]=1
     if verbose:        
         for k in range(len(shapedIndicies[0])):
@@ -280,8 +281,8 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
         basename = '_'.join(basename.split('exp='))
         basename = '-r'.join(basename.split('run='))
         basename += '_%s' % srcString
-        okOrds = range(ord('a'),ord('z')+1) + range(ord('A'),ord('Z')+1) + \
-                 range(ord('0'),ord('9')+1) + [ord('-'),ord('_')]
+        okOrds = list(range(ord('a'),ord('z')+1)) + list(range(ord('A'),ord('Z')+1)) + \
+                 list(range(ord('0'),ord('9')+1)) + [ord('-'),ord('_')]
         def filter(x):
             if x in okOrds:
                 return '%c'%x
@@ -340,7 +341,7 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
         manyToOne = findImageManyToOne(iX,iY)
         if len(manyToOne)>0:
             print("INFO: There are %d image pixels with more than one ndarr pixel mapped to it" % len(manyToOne))
-            for imagePos, ndarrList in manyToOne.iteritems():
+            for imagePos, ndarrList in manyToOne.items():
                 points = arrIndexListsToPoints(ndarrList)
                 points = [','.join(map(str,point)) for point in points]
 #                print "image pixel = %r  has ndarray elements = (%s)" % (imagePos, '), ('.join(points))
@@ -367,7 +368,7 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
                                                             calib_out_key)
     
     psana.setOptions(psanaOptions)
-    debugOut(debug,'psanaOptions:\n   %s\n' % '\n  '.join(map(lambda x: '%s=%s' % (x[0],x[1]),psanaOptions.iteritems())))
+    debugOut(debug,'psanaOptions:\n   %s\n' % '\n  '.join(['%s=%s' % (x[0],x[1]) for x in iter(psanaOptions.items())]))
     ds = psana.DataSource(dsetstring)
     src = psana.Source(srcString)
     debugOut(debug, "src=%s\n" % src)
@@ -473,4 +474,4 @@ def plotImageFile(inputFile):
     plt.ion()
     plt.imshow(np.log(normImage), interpolation='none')
     plt.draw()
-    raw_input("hit enter to end")
+    input("hit enter to end")

@@ -1,11 +1,14 @@
 from __future__ import absolute_import
+from __future__ import division
 ## system
+from future import standard_library
+standard_library.install_aliases()
 import mpi4py
 from mpi4py import MPI
 import os
 import numpy as np
 import time
-import StringIO
+import io
 import traceback
 import copy
 import collections
@@ -44,7 +47,7 @@ def roundRobin(n, dictData):
     '''
     if n==0:
         return []
-    keys = dictData.keys()
+    keys = list(dictData.keys())
     keys.sort()
     assert len(keys)>0, "rounRobin will fail to find n=%d items from empty dict" % n
     nextVal = dict([(ky,0) for ky in keys])
@@ -130,7 +133,7 @@ def identifyServerRanks(comm, numServers, serverHosts=None, excludeRank0=True):
 
     hostmsg = 'server host assignment:'
     rank2host=collections.defaultdict(list)
-    for host,rankList in serverHost2ranks.iteritems():
+    for host,rankList in serverHost2ranks.items():
         for rank in rankList:
             rank2host[rank].append(host)
 
@@ -138,7 +141,7 @@ def identifyServerRanks(comm, numServers, serverHosts=None, excludeRank0=True):
                           if rank in serverRanks])
     return serverRanks, hostmsg
 
-class MPI_Communicators:
+class MPI_Communicators(object):
     '''Keeps track of the different communicators for collective
     communications. Includes many parameters that identify the ranks
     and the communicators they are in.
@@ -1007,7 +1010,7 @@ def runCommSystem(mp, updateInterval, xCorrBase, hostmsg, serversRoundRobin, tes
             raise Exception("rank is neither server/master/viewer or worker - internal error")
 
     except Exception:
-        exceptBuffer = StringIO.StringIO()
+        exceptBuffer = io.StringIO()
         traceback.print_exc(file=exceptBuffer)
         logger.error('encountered exception: %s' % exceptBuffer.getvalue())
         MPI.COMM_WORLD.Abort(1)

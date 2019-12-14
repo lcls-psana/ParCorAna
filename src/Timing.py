@@ -36,7 +36,7 @@ class timecall(object):
 def reportOnTimingDict(logger, hdr, footer, timingDict=timingDict):
     msg = '\n%s\n' % hdr
     keyWidth = max([len(k) for k in timingDict.keys()])
-    for key, timingInfo in timingDict.iteritems():
+    for key, timingInfo in timingDict.items():
         totalSec, n, secToUnit, unitsText = timingInfo
         if n <= 0: continue
         avgPerCall = totalSec/float(secToUnit*n)

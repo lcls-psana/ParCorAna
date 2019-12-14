@@ -5,6 +5,7 @@ Functions include:
   *  Parsing/managing the dataset string.
   *  Creating psana options (same as config file) for loading a module chain
 '''
+from __future__ import division
 
 import sys
 import math
@@ -24,8 +25,8 @@ def rangesToList(rangeString):
         ab = cand.split('-')
         assert len(ab) in [1,2], "invalid range string: %s" % rangeString
         if len(ab)==2:
-            a,b = map(int,ab)
-            values = values.union(range(a,b+1))
+            a,b = list(map(int,ab))
+            values = values.union(list(range(a,b+1)))
         else:
             a = ab[0]
             values.add(int(a))

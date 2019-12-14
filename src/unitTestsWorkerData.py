@@ -65,7 +65,7 @@ class WorkerDataNoCallback( unittest.TestCase ):
         we fill X, we drop the earliest time.
         '''
 
-        times = range(4*self.numTimes)  # wrap around several times
+        times = list(range(4*self.numTimes))  # wrap around several times
         def mkArray(x):
             a=np.zeros(1,dtype=np.float)
             a[0]=x
@@ -81,7 +81,7 @@ class WorkerDataNoCallback( unittest.TestCase ):
                                    msg="data stored for tm=%d at idx=%d wrong" % (tm,xIdx))
 
         # test timesDataIndexes
-        answers = zip(range(15,20),range(5))
+        answers = list(zip(range(15,20),range(5)))
         for tm,idx in self.workerData.timesDataIndexes():
             tmAns,idxAns = answers.pop(0)
             self.assertEqual(tm,tmAns)
@@ -229,7 +229,7 @@ class WorkerDataCallback( unittest.TestCase ) :
         pass
 
     def test_addDataInOrder(self):
-        times = range(20)
+        times = list(range(20))
         def mkArrayPlus10(x):
             a=np.zeros(1, dtype=np.float)
             a[0]=10+x
@@ -241,7 +241,7 @@ class WorkerDataCallback( unittest.TestCase ) :
         self.assertEqual(len(self.callbacks['add']),20)
         self.assertEqual(len(self.callbacks['remove']),15)
 
-        adjustAnswer = map(float,range(10,30))
+        adjustAnswer = list(map(float,list(range(10,30))))
         addAnswer = [(tm,float(10+tm)) for tm in range(20)]
         removeAnswer = [(tm,float(10+tm)) for tm in range(15)]
 
@@ -257,7 +257,7 @@ class WorkerDataCallback( unittest.TestCase ) :
             self.assertEqual(ans[0], val[0], msg='remove callback, entry=%d, expected tm data, ans != val' % (idx,))
 
     def test_addDataOutOfOrder(self):
-        times = range(20)
+        times = list(range(20))
         def mkArrayPlus10(x):
             a=np.zeros(1, dtype=np.float)
             a[0]=10+x
@@ -269,7 +269,7 @@ class WorkerDataCallback( unittest.TestCase ) :
         self.assertEqual(len(self.callbacks['add']),20)
         self.assertEqual(len(self.callbacks['remove']),15)
 
-        adjustAnswer = map(float,range(10,30))
+        adjustAnswer = list(map(float,range(10,30)))
         addAnswer = [(tm,float(10+tm)) for tm in range(20)]
         removeAnswer = [(tm,float(10+tm)) for tm in range(15)]
 
@@ -452,7 +452,7 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
                                        storeDtype = storeDtype,
                                        addRemoveCallbackObject = corrCallback)
 
-        times = range(37)
+        times = list(range(37))
         datas = [mkDataAdd10(tm, numDataPointsThisWorker) for tm in times]
         datasForAnswer = [arr[0] for arr in datas]
 
@@ -462,8 +462,8 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
         answer = makePairsAnswer(times, datasForAnswer, delays)
         callbackAnswer = corrCallback.pairs
 
-        self.assertEqual(answer.keys(), callbackAnswer.keys())
-        for key, dataPairsAnswer in answer.iteritems():
+        self.assertEqual(list(answer.keys()), list(callbackAnswer.keys()))
+        for key, dataPairsAnswer in answer.items():
             dataPairsCallback = callbackAnswer[key]
             self.assertEqual(len(dataPairsCallback), len(dataPairsAnswer), msg="delay=%d, answer=%r callback=%r" % \
                              (key, dataPairsAnswer, dataPairsCallback))
@@ -487,7 +487,7 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
                                        storeDtype = storeDtype,
                                        addRemoveCallbackObject = corrCallback)
 
-        times = range(37)
+        times = list(range(37))
         datas = [mkDataAdd10(tm, numDataPointsThisWorker) for tm in times]
         datasForAnswer = [arr[0] for arr in datas]
 
@@ -511,8 +511,8 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
         answer = makePairsAnswer(times, datasForAnswer, delays)
         callbackAnswer = corrCallback.pairs
 
-        self.assertEqual(answer.keys(), callbackAnswer.keys())
-        for key, dataPairsAnswer in answer.iteritems():
+        self.assertEqual(list(answer.keys()), list(callbackAnswer.keys()))
+        for key, dataPairsAnswer in answer.items():
             dataPairsCallback = callbackAnswer[key]
             self.assertEqual(len(dataPairsCallback), len(dataPairsAnswer), msg="delay=%d, answer=%r callback=%r" % \
                              (key, dataPairsAnswer, dataPairsCallback))
@@ -541,7 +541,7 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
             arr[:]=tm+10
             return arr
 
-        times = range(37)
+        times = list(range(37))
         datas = [mkDataAdd10(tm, numDataPointsThisWorker) for tm in times]
         datasForAnswer = [arr[0] for arr in datas]
 
@@ -551,8 +551,8 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
         answer = makePairsAnswer(times, datasForAnswer, delays)
         callbackAnswer = corrCallback.pairs
 
-        self.assertEqual(answer.keys(), callbackAnswer.keys())
-        for key, dataPairsAnswer in answer.iteritems():
+        self.assertEqual(list(answer.keys()), list(callbackAnswer.keys()))
+        for key, dataPairsAnswer in answer.items():
             dataPairsCallback = callbackAnswer[key]
             if key < numTimes:
                 self.assertEqual(len(dataPairsCallback), len(dataPairsAnswer), msg="delay=%d, answer=%r callback=%r" % \
@@ -578,7 +578,7 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
                                        storeDtype = storeDtype,
                                        addRemoveCallbackObject = corrCallback)
 
-        times = range(37)
+        times = list(range(37))
         datas = [mkDataAdd10(tm, numDataPointsThisWorker) for tm in times]
         datasForAnswer = [arr[0] for arr in datas]
 
@@ -590,8 +590,8 @@ class WorkerDataCorrelationCalc( unittest.TestCase ) :
         answer = makePairsAnswer(times[-5:], datasForAnswer[-5:], delays)
         callbackAnswer = corrCallback.pairs
 
-        self.assertEqual(answer.keys(), callbackAnswer.keys())
-        for key, dataPairsAnswer in answer.iteritems():
+        self.assertEqual(list(answer.keys()), list(callbackAnswer.keys()))
+        for key, dataPairsAnswer in answer.items():
             dataPairsCallback = callbackAnswer[key]
             self.assertEqual(len(dataPairsCallback), len(dataPairsAnswer), msg="delay=%d, answer=%r callback=%r" % \
                              (key, dataPairsAnswer, dataPairsCallback))
