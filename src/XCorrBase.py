@@ -128,7 +128,7 @@ def writeConfig(h5file, system_params, user_params):
                 astype = fname2type[key]
                 filename = configDict[key]
                 assert os.path.exists(filename), "file %s doesn't exist" % filename
-                numpyArray = np.load(file(filename,'r')).astype(astype)
+                numpyArray = np.load(open(filename,'r')).astype(astype)
                 h5Group[key]=numpyArray
             else:
                 value = configDict[key]

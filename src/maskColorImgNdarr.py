@@ -235,11 +235,11 @@ def getNdarr2ImageMapping(dsetstring, srcString, psanaType, psanaTypeStr, geom):
     return iX, iY
     
 def saveNdarr2ImgMapping(iX,iY,iXfname,iYfname):
-    iXfout = file(iXfname, 'w')
+    iXfout = open(iXfname, 'w')
     np.save(iXfout, iX)
     iXfout.close()
 
-    iYfout = file(iYfname, 'w')
+    iYfout = open(iYfname, 'w')
     np.save(iYfout, iY)
     iYfout.close()
 
@@ -410,7 +410,7 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
         raise Exception(msg)
         
     print("Formed ndarr average - saving.")
-    fout = file(avgNdarrFname,'w')
+    fout = open(avgNdarrFname,'w')
     np.save(fout, ndarrAverage)
     fout.close()
 
@@ -420,48 +420,48 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
         saveNdarr2ImgMapping(iX, iY, iXfname, iYfname)
 
     print("saving img average")
-    fout = file(avgImgFname,'w')
+    fout = open(avgImgFname,'w')
     imgAverage = ndarr2img(ndarrAverage, iX, iY)
     np.save(fout, imgAverage)
     fout.close()
 
     maskNdarr = np.ones(ndarrAverage.shape,np.int8)
     print("saving a mask")
-    fout = file(maskNdarrFname,'w')
+    fout = open(maskNdarrFname,'w')
     np.save(fout, maskNdarr)
     fout.close()
 
     testmaskNdarr = np.zeros(ndarrAverage.shape,np.int8)
     turnOnTestPixels(testmaskNdarr, ndarrAverage, numTestPixels, verboseForTestPixels)
     print("saving a testmask")
-    fout = file(testmaskNdarrFname,'w')
+    fout = open(testmaskNdarrFname,'w')
     np.save(fout, testmaskNdarr)
     fout.close()
 
     print("saving img mask")
-    fout = file(maskImgFname,'w')
+    fout = open(maskImgFname,'w')
     np.save(fout, ndarr2img(maskNdarr, iX, iY))
     fout.close()
     
     print("making ndarr color file and saving")
     ndarrColor = makeColorArray(ndarrAverage, color)
-    fout = file(colorNdarrFname, 'w')
+    fout = open(colorNdarrFname, 'w')
     np.save(fout, ndarrColor)
     fout.close()
 
     print("saving to img")
-    fout = file(colorImgFname, 'w')
+    fout = open(colorImgFname, 'w')
     np.save(fout, ndarr2img(ndarrColor, iX, iY))
     fout.close()
     
     print("making ndarr finecolor file with %d colors and saving" % finecolor)
     finendarrColor = makeColorArray(ndarrAverage, finecolor)
-    fout = file(finecolorNdarrFname, 'w')
+    fout = open(finecolorNdarrFname, 'w')
     np.save(fout, finendarrColor)
     fout.close()
 
     print("saving to img")
-    fout = file(finecolorImgFname, 'w')
+    fout = open(finecolorImgFname, 'w')
     np.save(fout, ndarr2img(finendarrColor, iX, iY))
     fout.close()
 

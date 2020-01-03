@@ -354,7 +354,7 @@ class Cspad2x2( unittest.TestCase ) :
         
     def writeConfigFile(self, configname):
         configFileName = os.path.join(self.tempDestDir, configname)
-        configFile = file(configFileName, 'w')
+        configFile = open(configFileName, 'w')
         configFile.write(unindent(self.configFileContent.format(**self.formatDict)))
         configFile.close()
         return configFileName
