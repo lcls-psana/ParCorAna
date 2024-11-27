@@ -1,30 +1,9 @@
-#--------------------------------------------------------------------------
-# Description:
+
 #   Test script for ParCorAna
-#
-#------------------------------------------------------------------------
 
-
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
 import sys
-#import os
-#import stat
-#import tempfile
 import unittest
-#import subprocess as sb
-#import collections
-#import math
 import numpy as np
-#import glob
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
-#import psana
-#import h5py
-#import psana_test.psanaTestLib as ptl
-
 import ParCorAna as corAna
 
 class WorkerDataNoCallback( unittest.TestCase ):
@@ -67,7 +46,7 @@ class WorkerDataNoCallback( unittest.TestCase ):
 
         times = list(range(4*self.numTimes))  # wrap around several times
         def mkArray(x):
-            a=np.zeros(1,dtype=np.float)
+            a=np.zeros(1,dtype=np.float32)
             a[0]=x
             return a
         datas = [mkArray(t) for t in times]
@@ -231,7 +210,7 @@ class WorkerDataCallback( unittest.TestCase ) :
     def test_addDataInOrder(self):
         times = list(range(20))
         def mkArrayPlus10(x):
-            a=np.zeros(1, dtype=np.float)
+            a=np.zeros(1, dtype=np.float32)
             a[0]=10+x
             return a
         for tm in times:
@@ -259,7 +238,7 @@ class WorkerDataCallback( unittest.TestCase ) :
     def test_addDataOutOfOrder(self):
         times = list(range(20))
         def mkArrayPlus10(x):
-            a=np.zeros(1, dtype=np.float)
+            a=np.zeros(1, dtype=np.float32)
             a[0]=10+x
             return a
         for tm in times:
@@ -284,9 +263,6 @@ class WorkerDataCallback( unittest.TestCase ) :
             self.assertAlmostEqual(ans[1], val[1], msg='remove callback, entry=%d, expected x data, ans != val' % (idx,))
             self.assertEqual(ans[0], val[0], msg='remove callback, entry=%d, expected tm data, ans != val' % (idx,))
 
-
-#################################################
-######### TEST CORRELATION CALCULATION ##########
 
 def makePairsAnswer(times, data, delays):
     '''Testing tool to produce the pairs for the given delay
@@ -614,3 +590,5 @@ def debug():
 
 if __name__ == "__main__":
     unittest.main(argv=[sys.argv[0], '-v'])
+
+# EOF

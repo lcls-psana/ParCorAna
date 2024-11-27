@@ -1,6 +1,4 @@
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import division
+
 import os
 import sys
 import numpy as np
@@ -34,11 +32,11 @@ def arrIndexListsToPoints(indexLists):
     return points
 
 def makeColorArray(array, numColor):
-    '''An example of making a color array based on intensity of values. 
+    '''An example of making a color array based on intensity of values.
     That is, if numColor=5, the bottom 20% of array will get 1, and the top
     20% will get 5.
 
-    Returns array of same size with colors. 
+    Returns array of same size with colors.
     '''
     assert numColor>0
     sortedInds = np.argsort(array.flatten())
@@ -61,23 +59,23 @@ def makeColorArray(array, numColor):
 
 def findImageGaps(iX, iY):
     '''attempts to find gaps in maped image.
-    
+
     are there any missed pixels in the image? Of course there is the
     space between the detector segments, the background, but within the
     segments, are there any holes? Label connected components of the pixels
-    not mapped to by iX, iY. Report any components that do not touch the 
+    not mapped to by iX, iY. Report any components that do not touch the
     border pixels.
 
-    Returns: 
+    Returns:
       a list of index lists, each the result of np.where(X) where
-      X is in image space. These lists are for pixels where a believed 
+      X is in image space. These lists are for pixels where a believed
       component is - i.e, a component is pixels
       in the image that are both not mapped to by iX,iY and do not touch
       a border pixel in the image
     '''
 
-    imageShape = (np.int(np.max(iX) + 1),  # number of rows 
-                  np.int(np.max(iY) + 1))  # number of columns
+    imageShape = (np.int32(np.max(iX) + 1),  # number of rows
+                  np.int32(np.max(iY) + 1))  # number of columns
 
     image = np.ones(imageShape, np.int8)
     border = image.copy()
@@ -106,16 +104,16 @@ def findImageGaps(iX, iY):
         if not hitsBorder:
             gapComponents.append(np.where(labeledBool==True))
     return gapComponents
-    
+
 def findImageManyToOne(iX, iY):
-    '''are there any pixels that have several ndarray elements mapped to them?    
+    '''are there any pixels that have several ndarray elements mapped to them?
     ::
 
       Returns:
-      dict: keys are 2D image index pairs, 
+      dict: keys are 2D image index pairs,
             values are lists of ndarrays for the multi dimensional indicies of the ndarr
       i.e, return result might be:
-      { (3,4):[ array(3,6,6), 
+      { (3,4):[ array(3,6,6),
                 array(4,5,1),
                 array(0,1,2)] }
        meaning that ndarray elements  (3,4,0)  and (6,5,1)  and (6,1,2) all get mapped to
@@ -145,7 +143,7 @@ def findImageManyToOne(iX, iY):
 
 class NoGeomFile(Exception):
     pass
-        
+
 def getGeometryFile(dsetstring, srcString, typeString):
     dataRoot = '/reg/d/psdm'
     assert os.path.exists(dataRoot), "data base directory=%s does not exist" % dataRoot
@@ -169,8 +167,8 @@ def getGeometryFile(dsetstring, srcString, typeString):
     return geomFile
 
 def ndarr2img(ndarr, iX, iY, backgroundValue = None):
-    numRows = np.int(np.max(iX)+1)
-    numCols = np.int(np.max(iY)+1)
+    numRows = np.int32(np.max(iX)+1)
+    numCols = np.int32(np.max(iY)+1)
     imageShape = (numRows, numCols)
     image = np.zeros(imageShape, ndarr.dtype)
     if backgroundValue is not None:
@@ -233,7 +231,7 @@ def getNdarr2ImageMapping(dsetstring, srcString, psanaType, psanaTypeStr, geom):
     geometry = GeometryAccess(geometryFile)
     iX, iY = geometry.get_pixel_coord_indexes()
     return iX, iY
-    
+
 def saveNdarr2ImgMapping(iX,iY,iXfname,iYfname):
     iXfout = open(iXfname, 'w')
     np.save(iXfout, iX)
@@ -244,8 +242,8 @@ def saveNdarr2ImgMapping(iX,iY,iXfname,iYfname):
     iYfout.close()
 
 def makeNdarrImageMappingFor2D(shape2D):
-    iX = np.zeros(shape2D, np.int)
-    iY = np.zeros(shape2D, np.int)
+    iX = np.zeros(shape2D, np.int32)
+    iY = np.zeros(shape2D, np.int32)
     for x in range(shape2D[0]):
         iX[x,:]=x
     for y in range(shape2D[1]):
@@ -265,12 +263,12 @@ def turnOnTestPixels(arr,avg, numPixels=10, verbose=False):
     ind0 = max(0,ind0)
     shapedIndicies = np.unravel_index(list(range(ind0,ind1)),avg.shape)
     arr[shapedIndicies]=1
-    if verbose:        
+    if verbose:
         for k in range(len(shapedIndicies[0])):
             inds=[indList[k] for indList in shapedIndicies]
             print("turnOnTestPixels: Turned on index: (%s)" % ','.join(map(str,inds)))
 
-def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300, 
+def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
                      color=6, finecolor=18, basename=None, geom=None, debug=False, force=False,
                      numTestPixels=10, verboseForTestPixels=False):
     #### helper function ####
@@ -296,7 +294,7 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
         basename = basename.replace('_DetInfo_','_')
         print("INFO: generating basename=%s from dsetstring=%s and src=%s" % (basename, dsetstring, srcString))
         return basename
-            
+
     #### start code ####
     if basename is not None:
         assert isinstance(basename,str) and len(basename)>0, "invalid basename for files"
@@ -330,8 +328,8 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
     finecolorNdarrFname = basename + '_finecolor_ndarrCoords.npy'
     finecolorImgFname = basename + '_finecolor_imageCoords.npy'
 
-    for fname in [iXfname, iYfname, avgNdarrFname, avgImgFname, 
-                  maskNdarrFname, testmaskNdarrFname, maskImgFname, 
+    for fname in [iXfname, iYfname, avgNdarrFname, avgImgFname,
+                  maskNdarrFname, testmaskNdarrFname, maskImgFname,
                   colorNdarrFname, colorImgFname, finecolorNdarrFname, finecolorImgFname]:
         assert (not os.path.exists(fname)) or force, "file %s exists. pass --force to overwrite" % fname
 
@@ -362,11 +360,11 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
     # events and make an average
     ndarray_out_key = "ndarray"
     calib_out_key = "calibrated"
-    psanaOptions, outArrayType = PsanaUtil.makePsanaOptions(srcString, 
+    psanaOptions, outArrayType = PsanaUtil.makePsanaOptions(srcString,
                                                             psanaType,
                                                             ndarray_out_key,
                                                             calib_out_key)
-    
+
     psana.setOptions(psanaOptions)
     debugOut(debug,'psanaOptions:\n   %s\n' % '\n  '.join(['%s=%s' % (x[0],x[1]) for x in iter(psanaOptions.items())]))
     ds = psana.DataSource(dsetstring)
@@ -385,7 +383,7 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
     ### psana event loop
     for idx, evt in enumerate(ds.events()):
         calibNdarr = evt.get(outArrayType, src, calib_out_key)
-        if calibNdarr is None: 
+        if calibNdarr is None:
             eventsWithNoCalibNdarr += 1
             if eventsWithNoCalibNdarr > 130 and not foundCalibNdarr:
                 break
@@ -408,7 +406,7 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
         msg += "looking for psanaType=%s srcString=%s\n " % (psanaType, srcString)
         msg += "last event had: keys:\n  %s\n" % '\n  '.join(map(str,evt.keys()))
         raise Exception(msg)
-        
+
     print("Formed ndarr average - saving.")
     fout = open(avgNdarrFname,'w')
     np.save(fout, ndarrAverage)
@@ -442,7 +440,7 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
     fout = open(maskImgFname,'w')
     np.save(fout, ndarr2img(maskNdarr, iX, iY))
     fout.close()
-    
+
     print("making ndarr color file and saving")
     ndarrColor = makeColorArray(ndarrAverage, color)
     fout = open(colorNdarrFname, 'w')
@@ -453,7 +451,7 @@ def makeInitialFiles(dsetstring, psanaTypeStr, srcString, numForAverage=300,
     fout = open(colorImgFname, 'w')
     np.save(fout, ndarr2img(ndarrColor, iX, iY))
     fout.close()
-    
+
     print("making ndarr finecolor file with %d colors and saving" % finecolor)
     finendarrColor = makeColorArray(ndarrAverage, finecolor)
     fout = open(finecolorNdarrFname, 'w')
@@ -475,3 +473,5 @@ def plotImageFile(inputFile):
     plt.imshow(np.log(normImage), interpolation='none')
     plt.draw()
     input("hit enter to end")
+
+# EOF

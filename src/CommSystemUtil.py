@@ -1,6 +1,7 @@
+
 '''Utility functions for CommSystem
 '''
-from __future__ import division
+
 import math
 import logging
 import time
@@ -12,7 +13,7 @@ import os
 import numpy as np
 
 def formatFileName(fname):
-    '''Looks for %T in a file and %C. Replaces them with 
+    '''Looks for %T in a file and %C. Replaces them with
 
      %T  -> yyyymmddhhmmss (year, month, day, hour, minute, second)
      %C  -> look at files on disk - use next one up counter
@@ -52,15 +53,15 @@ def formatFileName(fname):
     fname = beforeC + ("%3.3d" % nextCounter) + afterC
     return fname
 
-            
-def checkCountsOffsets(counts, offsets, n):    
-    '''Makes sure that the counts and offsets partition n. 
-    
+
+def checkCountsOffsets(counts, offsets, n):
+    '''Makes sure that the counts and offsets partition n.
+
     Throws an exception if there is a problem
 
     Examples:
       >>> checkCountsOffsets(counts=[2,2,2], offsets=[0,2,4], n=6)
-      # this is correct. 
+      # this is correct.
       >>> checkCountsOffsets(counts=[2,2,2], offsets=[0,2,4], n=7)
       # incorrect, throws assert
       >>> checkCountsOffsets(counts=[2,2,2], offsets=[2,4,6], n=6)
@@ -76,10 +77,10 @@ def checkCountsOffsets(counts, offsets, n):
 def divideAmongWorkers(dataLength, numWorkers):
     '''partition the amount of data as evenly as possible among the given number of workers.
 
-    Examples: 
-      >>> divideAmongWorkers(11,3) 
+    Examples:
+      >>> divideAmongWorkers(11,3)
       returns offsets=[0,4,8]
-              counts=[4,4,3]    
+              counts=[4,4,3]
     '''
     assert numWorkers > 0, "dividAmongWorkers - numWorkers is <= 0"
     k = int(math.floor(dataLength / numWorkers))
@@ -90,16 +91,16 @@ def divideAmongWorkers(dataLength, numWorkers):
     for w in range(numWorkers):
         offsets.append(nextOffset)
         count = k
-        if r > 0: 
+        if r > 0:
             count += 1
             r -= 1
         counts.append(count)
         nextOffset += count
     checkCountsOffsets(counts, offsets, dataLength)
-    return offsets, counts            
- 
+    return offsets, counts
+
 loggers = {}
-   
+
 def makeLogger(isTestMode, isMaster, isViewer, isServer, rank, lvl='INFO', propagate=False):
     '''Returns Python logger with prefix identifying master/viewer/server/worker & rnk
 
@@ -159,7 +160,7 @@ def makeLogger(isTestMode, isMaster, isViewer, isServer, rank, lvl='INFO', propa
 def checkParams(system_params, user_params, checkUserParams=False):
     '''Checks for correct keys in system_params. Optionally checks userParams.
 
-    When checking userParams, checks against UserG2 module in this package. 
+    When checking userParams, checks against UserG2 module in this package.
     Loads mask file from system_params and checks its shape against that of
     the color and finecolor files in the user_params. Checks for consistency in
     the color/finecolor file. Warns of 'pixel waste', pixels that are 0 in the color
@@ -168,25 +169,25 @@ def checkParams(system_params, user_params, checkUserParams=False):
     '''
     expectedSystemKeys = set(['dataset',
                               'src',
-                              'psanaType', 
+                              'psanaType',
                               'ndarrayProducerOutKey',
-                              'ndarrayCalibOutKey', 
+                              'ndarrayCalibOutKey',
                               'psanaOptions',
-                              'outputArrayType', 
+                              'outputArrayType',
                               'workerStoreDtype',
                               'maskNdarrayCoords',
                               'testMaskNdarrayCoords',
-                              'numServers', 
+                              'numServers',
                               'serverHosts',
                               'serversRoundRobin',
-                              'times', 
+                              'times',
                               'update',
                               'delays',
-                              'h5output', 
+                              'h5output',
                               'testH5output',
                               'overwrite',
-                              'verbosity', 
-                              'numEvents', 
+                              'verbosity',
+                              'numEvents',
                               'userClass',
                               'testNumEvents'])
 
@@ -197,7 +198,7 @@ def checkParams(system_params, user_params, checkUserParams=False):
     if len(newSystemKeys)>0 and MPI.COMM_WORLD.Get_rank()==0:
         sys.stderr.write("Warning: unexpected keys in system_params: %r\n" % (newSystemKeys,))
     if checkUserParams:
-        
+
         assert 'colorNdarrayCoords' in user_params
         assert 'colorFineNdarrayCoords' in user_params
         assert os.path.exists(system_params['maskNdarrayCoords']), "maskNdarrayCoords file:  '%s' doesn't exist" % system_params['maskNdarrayCoords']
@@ -206,7 +207,7 @@ def checkParams(system_params, user_params, checkUserParams=False):
         mask = np.load(system_params['maskNdarrayCoords']).astype(np.int8)
         color = np.load(user_params['colorNdarrayCoords']).astype(np.int32)
         finecolor = np.load(user_params['colorFineNdarrayCoords']).astype(np.int32)
-        
+
         assert mask.shape == color.shape, "mask shape=%r != color.shape=%r" % (mask.shape, color.shape)
         assert color.shape == finecolor.shape, "color.shape=%r != finecolor.shape=%r" % (color.shape, finecolor.shape)
 
@@ -216,7 +217,7 @@ def checkParams(system_params, user_params, checkUserParams=False):
         assert np.min(finecolor)>=0, "color file contains values < 0"
         assert np.max(color)<=MAXCOLOR, "color file contains values > %d" % MAXCOLOR
         assert np.max(finecolor)<=MAXCOLOR, "color file contains values > %d" % MAXCOLOR
-        
+
         numFineColorThatAreZeroWhereColorIsNonZero = np.sum(finecolor[color > 0] == 0)
         assert numFineColorThatAreZeroWhereColorIsNonZero == 0, "finecolor file has pixels that are zero where color file is nonzero"
         mask_flat = mask.flatten()
@@ -231,17 +232,17 @@ def checkParams(system_params, user_params, checkUserParams=False):
         if pixel_waste > 0 and MPI.COMM_WORLD.Get_rank() == 0:
             sys.stderr.write(("Warning: there are %d or %.1f%% pixels that are 0 or < 0 in the color file: "+
                              "%s that are not 0 in the mask file: %s. These pixels will still be "+
-                              "procssed by workers, but not the viewer. Consider turning them off in the " + 
+                              "procssed by workers, but not the viewer. Consider turning them off in the " +
                               "mask file. There are %d mask included pixels that are on in the color file.\n") % \
                              (pixel_waste, 100.0*pixel_waste/float(mask_flat.shape[0]),
                               user_params['colorNdarrayCoords'],
                               system_params['maskNdarrayCoords'],
                               pixels_on))
-        
+
 
 def imgBoundBox(iX, iY, maskNdArrayCoords):
     '''returns bounding box in image space for ndarray mask
-    
+
     Takes three matricies, all ndarray's
     ARGS:
       iX     gives row/dim0 in image space for each pixel in ndarray
@@ -257,7 +258,7 @@ def imgBoundBox(iX, iY, maskNdArrayCoords):
     numImageRows = np.max(iX)+1
     numImageCols = np.max(iY)+1
     fullImageShape = (numImageRows, numImageCols)
-    maskImage = np.zeros(fullImageShape, dtype=np.int)
+    maskImage = np.zeros(fullImageShape, dtype=np.int32)
     maskImage[iX.flatten(), iY.flatten()] = maskNdArrayCoords.astype(np.int8).flatten()[:]
     rowSums = np.sum(maskImage,1)
     colSums = np.sum(maskImage,0)
@@ -277,7 +278,7 @@ def replaceSubsetsWithAverage(A, labels, label2total=None):
       labels      - numpy array of ints, >= 0, same shape as A, each int labels a subset
       label2total - optional dictionary of number of pixels in each label in labels
     RETURN:
-      new matrix of averages values 
+      new matrix of averages values
     '''
     assert A.shape == labels.shape
     if label2total == None:
@@ -297,3 +298,4 @@ def replaceSubsetsWithAverage(A, labels, label2total=None):
     avgA.resize(A.shape)
     return avgA
 
+# EOF

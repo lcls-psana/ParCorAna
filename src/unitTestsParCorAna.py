@@ -1,14 +1,7 @@
 from __future__ import print_function
-#--------------------------------------------------------------------------
-# Description:
+
 #   Test script for ParCorAna
-#   
-#------------------------------------------------------------------------
 
-
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
 from future import standard_library
 standard_library.install_aliases()
 import sys
@@ -21,9 +14,7 @@ import numpy as np
 import h5py
 import glob
 import shutil
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
+
 import psana
 from AppUtils.AppDataPath import AppDataPath
 import psana_test.psanaTestLib as ptl
@@ -34,7 +25,7 @@ NOCLEAN = os.environ.get('NOCLEAN',False)
 if not NOCLEAN:
     sys.stdout.write("%s: set environment variable NOCLEAN=1 to keep temporary directories and from unit tests" %  __file__)
 
-### helper function
+
 def runCmd(cmd, verbose=True):
     o,e,retcode = ptl.cmdTimeOutWithReturnCode(cmd, seconds=10*60)
     if verbose: print("---  ran cmd: %s" % cmd)
@@ -70,7 +61,7 @@ class FormatFileName( unittest.TestCase ) :
         if NOCLEAN:
             return
         shutil.rmtree(self.tempDestDir, ignore_errors=True)
-        
+
     def test_formatFileName(self):
         fname = os.path.join(self.tempDestDir, "file.h5")
         fname_w_T = os.path.join(self.tempDestDir, "file_%T.h5")
@@ -81,7 +72,7 @@ class FormatFileName( unittest.TestCase ) :
 
         tmfname = corAna.formatFileName(fname_w_T)
         os.system('touch %s' % tmfname)
-        self.assertNotEqual(tmfname,fname)        
+        self.assertNotEqual(tmfname,fname)
                                               # %C 2015 05 05 16 19 59
         self.assertEqual(len(tmfname),len(fname_w_T)-2   +4 +2 +2 +2 +2 +2, msg="tmfname=%s" % tmfname)
 
@@ -110,7 +101,7 @@ class ParCorAna( unittest.TestCase ) :
 
     def tearDown(self) :
         pass
-        
+
     def test_parseDataSetString(self):
         '''test parseDataSetString function
         '''
@@ -121,7 +112,7 @@ class ParCorAna( unittest.TestCase ) :
         self.assertEqual(dsOpts['xtc'],True)
         self.assertEqual(dsOpts['live'],False)
         self.assertEqual(dsOpts['shmem'],False)
-        
+
     def test_noConfig(self):
         system_params = {}
         user_params = {}
@@ -162,23 +153,23 @@ class ParCorAna( unittest.TestCase ) :
 
 class Cspad2x2( unittest.TestCase ) :
     '''Test on small cspad2x2.
-    This test data has 60 events. 
-    The order we go through the data depends on whether or not we are 
-    round robining through the servers, or picking the earliest server. 
-    One fiducial is missing from the events. This is fiducial 0x08214. 
-    Assigning a 0 up 120hz counter to the events, this will be counter 56. 
+    This test data has 60 events.
+    The order we go through the data depends on whether or not we are
+    round robining through the servers, or picking the earliest server.
+    One fiducial is missing from the events. This is fiducial 0x08214.
+    Assigning a 0 up 120hz counter to the events, this will be counter 56.
     You will see events 0,1,2, ...,55,57,58,60.
     When you go through the events using three servers for the three streams in round robin
     you get the events in this order:
     0 5 3 1 7 4 2 8 9 6 11 12 10 17 15 13 18 19 14 21 24 16 22 25 20 26 29 23 30 31 27 34 32 28 36 37 33 39 42 35 41 43 38 44 48 40 47 49 45 50 54 46 52 55 51 57 58 53 60 59
-    
-    For incremental window below, with a window of 20, at the end of the run we will 
+
+    For incremental window below, with a window of 20, at the end of the run we will
     be looking at these counters to form delays:
     41 43 38 44 48 40 47 49 45 50 54 46 52 55 51 57 58 53 60 59
 
     below we sort them, and give the differences between them:
     38 40 41 43 44 45 46 47 48 49 50 51 52 53 54 55 57 58 59 60
-      2  1  2  1  1  1  1  1  1  1  1  1  1  1  1  2  1  1  1 
+      2  1  2  1  1  1  1  1  1  1  1  1  1  1  1  2  1  1  1
 
     for these delays: [1,2,3,5,7,10,15,23,34,50] we will expect counts of
     1:16, 2:
@@ -186,7 +177,7 @@ class Cspad2x2( unittest.TestCase ) :
     def setUp(self) :
         dataDir = os.path.join(ptl.getMultiFileDataDir(), 'test_013_xcsi0314')
         experiment = 'xcsi0314'
-        run = 178  
+        run = 178
         correctVersion = 0
 
         maskColorDir = os.path.join(dataDir, 'maskColorDir')
@@ -200,7 +191,7 @@ class Cspad2x2( unittest.TestCase ) :
         atEndCorrectBaseName = 'g2calc_cspad2x2_atEnd_%s-r%4.4d_v%d.h5' % (experiment, run, correctVersion)
         accumCorrectBaseName = 'g2calc_cspad2x2_incrAccum_%s-r%4.4d_v%d.h5' % (experiment, run, correctVersion)
         windowNoRoundRobinCorrectBaseName = 'g2calc_cspad2x2_windowNoRoundRobin_%s-r%4.4d_v%d.h5' % (experiment, run, correctVersion)
-        
+
         maskFile = os.path.join(maskColorDir, maskFileBaseName)
         testMaskFile = os.path.join(maskColorDir, testMaskFileBaseName)
         colorFile = os.path.join(maskColorDir, colorFileBaseName)
@@ -218,7 +209,7 @@ class Cspad2x2( unittest.TestCase ) :
 
         numServers = 3
         serversRoundRobin = False
-        
+
         # make a random directory for the testing that we will remove when done
         tempDestDir = tempfile.mkdtemp()
         if not os.path.exists(tempDestDir): os.mkdir(tempDestDir)
@@ -231,7 +222,7 @@ class Cspad2x2( unittest.TestCase ) :
         testName = '--TESTS-MUST-FILL-THIS-IN--'
         numTimes = 100  # test data only has 60 events
         delays = [1, 2, 3, 5, 7, 10, 15, 23, 34, 50]
-        saturatedValue = (1<<15) 
+        saturatedValue = (1<<15)
         update = 0
         calibDir = ptl.getTestCalibDir()
         self.formatDict = locals().copy()
@@ -256,7 +247,7 @@ class Cspad2x2( unittest.TestCase ) :
         system_params = {{}}
         system_params['dataset']   = 'exp={experiment}:run={run}:dir={dataDir}'
         system_params['src']       = 'DetInfo(XcsEndstation.0:Cspad2x2.0)'
-        system_params['psanaType'] = psana.CsPad2x2.ElementV1 
+        system_params['psanaType'] = psana.CsPad2x2.ElementV1
         system_params['ndarrayProducerOutKey'] = 'ndarray'
         system_params['ndarrayCalibOutKey'] = 'calibrated'
         system_params['psanaOptions'], system_params['outputArrayType'] = \\
@@ -271,7 +262,7 @@ class Cspad2x2( unittest.TestCase ) :
         system_params['testMaskNdarrayCoords'] = '{testMaskFile}'
         system_params['numServers'] = {numServers}
         system_params['serversRoundRobin'] = {serversRoundRobin}
-        system_params['serverHosts'] = None  # None means system selects which hosts to use (default). 
+        system_params['serverHosts'] = None  # None means system selects which hosts to use (default).
         system_params['times'] = {numTimes}
         system_params['update'] = {update}
         system_params['delays'] = {delays}
@@ -307,18 +298,18 @@ class Cspad2x2( unittest.TestCase ) :
 
     def tearDown(self) :
         """
-        Method called immediately after the test method has been called and 
-        the result recorded. This is called even if the test method raised 
-        an exception, so the implementation in subclasses may need to be 
-        particularly careful about checking internal state. Any exception raised 
-        by this method will be considered an error rather than a test failure. 
-        This method will only be called if the setUp() succeeds, regardless 
-        of the outcome of the test method. 
+        Method called immediately after the test method has been called and
+        the result recorded. This is called even if the test method raised
+        an exception, so the implementation in subclasses may need to be
+        particularly careful about checking internal state. Any exception raised
+        by this method will be considered an error rather than a test failure.
+        This method will only be called if the setUp() succeeds, regardless
+        of the outcome of the test method.
         """
         global NOCLEAN
         if NOCLEAN:
             return
-        shutil.rmtree(self.tempDestDir, ignore_errors=True) 
+        shutil.rmtree(self.tempDestDir, ignore_errors=True)
 
 
     def test_FilesSame(self):
@@ -327,13 +318,13 @@ class Cspad2x2( unittest.TestCase ) :
         '''
         md5sums={'maskColorDir/xcsi0314-r178_XcsEndstation_0_Cspad2x2_0_color_ndarrCoords.npy':     'dad6ebe25b364eeea4114c036b54ea4c',
                  'maskColorDir/xcsi0314-r178_XcsEndstation_0_Cspad2x2_0_finecolor_ndarrCoords.npy': 'f6cdb19b26d28d96a17b87ddde3be12c',
-                 'maskColorDir/xcsi0314-r178_XcsEndstation_0_Cspad2x2_0_mask_ndarrCoords.npy':      '9b8ade01f93fc087228c15cad9944856', 
-                 'maskColorDir/xcsi0314-r178_XcsEndstation_0_Cspad2x2_0_testmask_ndarrCoords.npy':  '282715e77fb5e4247a6b0851f3b244ea', 
-                 'e524-r0178-s00-c00.xtc':                                                          'b73a43ee4393c8c793d430f951cad021', 
-                 'e524-r0178-s01-c00.xtc':                                                          'eee2248370bef1a94202d5d6afd89799', 
-                 'e524-r0178-s02-c00.xtc':                                                          'd340d899c5ab36f34b75df419af3b711', 
-                 'e524-r0178-s03-c00.xtc':                                                          '111d1ab55c6bbb685bea7d5501587e1d', 
-                 'e524-r0178-s04-c00.xtc':                                                          '18fcbc6eec20d2a94f31750f49dc1bda', 
+                 'maskColorDir/xcsi0314-r178_XcsEndstation_0_Cspad2x2_0_mask_ndarrCoords.npy':      '9b8ade01f93fc087228c15cad9944856',
+                 'maskColorDir/xcsi0314-r178_XcsEndstation_0_Cspad2x2_0_testmask_ndarrCoords.npy':  '282715e77fb5e4247a6b0851f3b244ea',
+                 'e524-r0178-s00-c00.xtc':                                                          'b73a43ee4393c8c793d430f951cad021',
+                 'e524-r0178-s01-c00.xtc':                                                          'eee2248370bef1a94202d5d6afd89799',
+                 'e524-r0178-s02-c00.xtc':                                                          'd340d899c5ab36f34b75df419af3b711',
+                 'e524-r0178-s03-c00.xtc':                                                          '111d1ab55c6bbb685bea7d5501587e1d',
+                 'e524-r0178-s04-c00.xtc':                                                          '18fcbc6eec20d2a94f31750f49dc1bda',
                  'e524-r0178-s05-c00.xtc':                                                          '9d87909f0c613ca6433fc94d0985521d',
                  'ParCorAnaTestAnswers/g2calc_cspad2x2_atEnd_xcsi0314-r0178_v0.h5':                 '777d665671ce0b38476c16377f597724',
                  'ParCorAnaTestAnswers/g2calc_cspad2x2_incrAccum_xcsi0314-r0178_v0.h5':             'f3e67511e46fcff5aab272463faeccfc',
@@ -351,7 +342,7 @@ class Cspad2x2( unittest.TestCase ) :
             cur_md5 = ptl.get_md5sum(fullFname)
             self.assertEqual(cur_md5, prev_md5, msg="md5 has changed for %s. old=%s new=%s" % \
                              (fullFname, prev_md5, cur_md5))
-        
+
     def writeConfigFile(self, configname):
         configFileName = os.path.join(self.tempDestDir, configname)
         configFile = open(configFileName, 'w')
@@ -392,7 +383,7 @@ class Cspad2x2( unittest.TestCase ) :
 
         cmd = 'parCorAnaDriver --cmp -c ' + configFileName
         self.assertEqual(0, runCmd(cmd, verbose=True), msg="error running %s - files must differ" % cmd)
-        
+
     def test_SaturatedPixels(self):
         self.formatDict['userClass']='UserG2.G2atEnd'
         self.formatDict['saturatedValue'] = 300
@@ -414,11 +405,11 @@ class Cspad2x2( unittest.TestCase ) :
                 break
             if ln.find(expectedLines[0])>=0:
                 expectedLines.pop(0)
-                
+
         self.assertEqual(0,len(expectedLines), "From cmd: %s\nDid not find output lines that included these lines in this order:\n%s" % \
                          (cmd, '\n'.join(expectedLines)))
 
-        
+
     def test_G2IncrementalAccumulator(self):
         self.formatDict['userClass']='UserG2.G2IncrementalAccumulator'
         testName = 'incrAccum'
@@ -441,12 +432,12 @@ class Cspad2x2( unittest.TestCase ) :
 
         cmd = 'parCorAnaDriver --cmp -c ' + configFileName
         self.assertEqual(0, runCmd(cmd, verbose=True), msg="error running %s - files must differ" % cmd)
-        
+
     def test_G2WindowRoundRobin(self):
         self.formatDict['userClass']='UserG2.G2IncrementalWindowed'
         testName = 'windowRoundRobin'
         self.formatDict['testName'] = testName
-        self.formatDict['numTimes'] = 20 
+        self.formatDict['numTimes'] = 20
         self.formatDict['serversRoundRobin'] = True
         self.assertListEqual(self.formatDict['delays'],[1, 2, 3, 5, 7,10,15,23,34,50])
         self.expectedCounts =               [ 18, 17, 16, 15, 13, 10, 5, 0, 0, 0]
@@ -462,14 +453,14 @@ class Cspad2x2( unittest.TestCase ) :
         o,e,retcode = ptl.cmdTimeOutWithReturnCode(cmd)
         self.assertEqual(0, retcode, msg="comparing windowRoundRobin with no round robin with numTimes=%d failed.\ncmp cmd=%s" % \
                          (self.formatDict['numTimes'], cmd))
-        
+
     def test_G2WindowNoRoundRobin(self):
         self.formatDict['userClass']='UserG2.G2IncrementalWindowed'
         testName = 'windowNoRoundRobina'
         self.formatDict['testName'] = testName
         self.formatDict['numTimes'] = 20   # 60 events, so we will get a smaller window
         delays = self.formatDict['delays']
-        self.assertListEqual(delays,[1,2,3,5,7,10,15,23,34,50])        
+        self.assertListEqual(delays,[1,2,3,5,7,10,15,23,34,50])
         # the last 20 long window (see comments in CsPad2x2 class) will be
         # 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 -- 57 58 59 60
         # with the missing 56, the expected counts will be
@@ -488,7 +479,7 @@ class Cspad2x2( unittest.TestCase ) :
 
         cmd = 'parCorAnaDriver --cmp -c ' + configFileNameA
         self.assertEqual(0, runCmd(cmd, verbose=True), msg="error running %s - files must differ" % cmd)
-        
+
         # we expect windowed incremental to produce the same result as G2 at end with a small numTimes
         self.formatDict['userClass']='UserG2.G2atEnd'
         self.formatDict['testName'] = 'windowedNoRoundRobinAtEndForCmp'
@@ -515,7 +506,7 @@ class UtilFunctions( unittest.TestCase ) :
 
     def test_delay(self):
         delays = corAna.makeDelayList(start=1,
-                                      stop=15000, 
+                                      stop=15000,
                                       num=100,
                                       spacing='log',  # can also be 'lin'
                                       logbase=10.0)
@@ -523,10 +514,10 @@ class UtilFunctions( unittest.TestCase ) :
         self.assertEqual(len(badDelays),0)
         self.assertEqual(len(delays),100)
 
-    def test_replaceSubsetsWithAverage(self):        
+    def test_replaceSubsetsWithAverage(self):
         A = np.array(list(range(15)))
         A.resize((3,5))
-        labels = np.array([1]*5 + [2]*5 + [3]*5, np.int)
+        labels = np.array([1]*5 + [2]*5 + [3]*5, np.int32)
         labels.resize((3,5))
         avgA = corAna.replaceSubsetsWithAverage(A,labels)
         self.assertEqual(avgA.shape, A.shape)
@@ -547,10 +538,10 @@ class UtilFunctions( unittest.TestCase ) :
             self.assertAlmostEqual(avgA[2,idx], 12.0)
         self.assertEqual(avgA.dtype, np.float64)
 
-    def test_replaceSubsetsWithAverageOddShapes(self):        
+    def test_replaceSubsetsWithAverageOddShapes(self):
         A = np.array(list(range(15)))
         A.resize((3,5))
-        labels = np.array([0]*2 + [2]*5 + [4]*5 + [6]*3, np.int)
+        labels = np.array([0]*2 + [2]*5 + [4]*5 + [6]*3, np.int32)
         labels.resize((3,5))
         avgA = corAna.replaceSubsetsWithAverage(A,labels)
         self.assertAlmostEqual(avgA[0,0], 0.5)
@@ -572,10 +563,10 @@ class UtilFunctions( unittest.TestCase ) :
         self.assertAlmostEqual(avgA[2,3], 13.0)
         self.assertAlmostEqual(avgA[2,4], 13.0)
 
-    def test_replaceSubsetsWithAverageOddShapesAndWithCounts(self):        
+    def test_replaceSubsetsWithAverageOddShapesAndWithCounts(self):
         A = np.array(list(range(15)))
         A.resize((3,5))
-        labels = np.array([0]*2 + [2]*5 + [4]*5 + [6]*3, np.int)
+        labels = np.array([0]*2 + [2]*5 + [4]*5 + [6]*3, np.int32)
         labels.resize((3,5))
         label2count = {0:2,2:5,4:5,6:3}
         avgA = corAna.replaceSubsetsWithAverage(A,labels, label2count)
@@ -600,3 +591,5 @@ class UtilFunctions( unittest.TestCase ) :
 
 if __name__ == "__main__":
     unittest.main(argv=[sys.argv[0], '-v'])
+
+# EOF
